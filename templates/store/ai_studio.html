@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Studio IA" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb">
+        <a href="{% url 'dashboard' %}">{% trans "Tableau de bord" %}</a> / <span>{% trans "Studio IA" %}</span>
+    </div>
+    <div class="page-head">
+        <h1>✨ {% trans "Studio IA" %}</h1>
+        <p class="muted">
+            {% if ai_available %}
+                {% blocktrans with m=ai_model %}Connecté à Claude ({{ m }}) pour la génération de textes.{% endblocktrans %}
+            {% else %}
+                {% trans "Mode hors-ligne (gabarits). Ajoutez une clé ANTHROPIC_API_KEY pour activer Claude." %}
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="cart-layout">
+        <!-- Génération de description -->
+        <div class="panel">
+            <h3 class="dash-title">📝 {% trans "Générer une description" %}</h3>
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="describe">
+                <div class="form-field">
+                    <label>{% trans "Nom de l'article" %}</label>
+                    <input type="text" name="name" class="input" placeholder="{% trans 'Ex : Robe longue satinée' %}" value="{{ result.name|default:'' }}" required>
+                </div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>{% trans "Catégorie" %}</label>
+                        <input type="text" name="category" class="input" list="cats" placeholder="{% trans 'Ex : Robes' %}">
+                        <datalist id="cats">{% for c in categories %}<option value="{{ c.name }}">{% endfor %}</datalist>
+                    </div>
+                    <div class="form-field">
+                        <label>{% trans "Rayon" %}</label>
+                        <select name="gender" class="select">
+                            <option value="Femme">{% trans "Femme" %}</option>
+                            <option value="Homme">{% trans "Homme" %}</option>
+                            <option value="Unisexe">{% trans "Unisexe" %}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>{% trans "Mots-clés, matière, style (optionnel)" %}</label>
+                    <input type="text" name="keywords" class="input" placeholder="{% trans 'Ex : lin, coupe ample, été, beige' %}">
+                </div>
+                <div class="form-field">
+                    <label>{% trans "Enregistrer sur un article (optionnel)" %}</label>
+                    <select name="attach_product" class="select">
+                        <option value="">— {% trans "Ne pas enregistrer" %} —</option>
+                        {% for p in products %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block">✨ {% trans "Générer la description" %}</button>
+            </form>
+
+            {% if result.description %}
+            <div class="ai-result">
+                <div class="ai-badge">{% if result.source == 'claude' %}🤖 Claude{% else %}📋 {% trans "Gabarit" %}{% endif %}</div>
+                <p>{{ result.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Génération de visuel -->
+        <div class="panel">
+            <h3 class="dash-title">🎨 {% trans "Créer un visuel (à partir d'un modèle)" %}</h3>
+            <form method="post" action="">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="image">
+                <div class="form-field">
+                    <label>{% trans "Titre affiché" %}</label>
+                    <input type="text" name="image_title" class="input" placeholder="{% trans 'Ex : Nouvelle collection' %}" value="DressIT">
+                </div>
+                <div class="form-field">
+                    <label>{% trans "Sous-titre (optionnel)" %}</label>
+                    <input type="text" name="image_subtitle" class="input" placeholder="{% trans 'Ex : Femme · Robes' %}">
+                </div>
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label>{% trans "Type de vêtement" %}</label>
+                        <select name="garment" class="select">
+                            {% for g in garments %}<option value="{{ g }}">{{ g }}</option>{% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>{% trans "Ambiance (couleur)" %}</label>
+                        <select name="palette" class="select">
+                            {% for i in "012345" %}<option value="{{ forloop.counter0 }}">{% trans "Teinte" %} {{ forloop.counter }}</option>{% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label>{% trans "Ajouter aux photos d'un article (optionnel)" %}</label>
+                    <select name="attach_product" class="select">
+                        <option value="">— {% trans "Aperçu seulement" %} —</option>
+                        {% for p in products %}<option value="{{ p.id }}">{{ p.name }}</option>{% endfor %}
+                    </select>
+                </div>
+                <button class="btn btn-primary btn-block">🎨 {% trans "Générer le visuel" %}</button>
+            </form>
+
+            {% if result.image_url %}
+            <div class="ai-result">
+                <img src="{{ result.image_url }}" alt="{% trans 'Visuel généré' %}" style="width:100%;border-radius:var(--radius-sm);">
+                <a href="{{ result.image_url }}" download class="btn btn-ghost btn-sm btn-block" style="margin-top:10px;">⬇ {% trans "Télécharger" %}</a>
+            </div>
+            {% endif %}
+
+            <p class="muted" style="font-size:0.8rem;margin-top:14px;">
+                💡 {% trans "Pour des photos IA photoréalistes, branchez un service de génération d'images (clé API) — la structure est prête dans store/ai.py." %}
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

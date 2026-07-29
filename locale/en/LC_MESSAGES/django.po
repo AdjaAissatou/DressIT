@@ -510,6 +510,144 @@ msgstr "See you soon at DressIT!"
 msgid "À bientôt sur DressIT — la mode aux prix les plus abordables."
 msgstr "See you soon at DressIT — fashion at the most affordable prices."
 
+msgid "Gestion"
+msgstr "Management"
+
+msgid "Tableau de bord"
+msgstr "Dashboard"
+
+msgid "Vue d'ensemble de votre boutique DressIT"
+msgstr "Overview of your DressIT store"
+
+msgid "Nouvel article"
+msgstr "New item"
+
+msgid "Catégorie"
+msgstr "Category"
+
+msgid "Studio IA"
+msgstr "AI Studio"
+
+msgid "Administration"
+msgstr "Admin"
+
+msgid "Chiffre d'affaires"
+msgstr "Revenue"
+
+msgid "Commandes"
+msgstr "Orders"
+
+msgid "Clients"
+msgstr "Customers"
+
+msgid "comptes créés"
+msgstr "accounts created"
+
+msgid "Articles"
+msgstr "Items"
+
+msgid "en vente"
+msgstr "on sale"
+
+msgid "catégories"
+msgstr "categories"
+
+msgid "Ruptures de stock"
+msgstr "Out of stock"
+
+msgid "en stock faible"
+msgstr "low stock"
+
+msgid "en attente"
+msgstr "pending"
+
+msgid "Ventes des 14 derniers jours"
+msgstr "Sales over the last 14 days"
+
+msgid "Statut des commandes"
+msgstr "Order status"
+
+msgid "Commandes récentes"
+msgstr "Recent orders"
+
+msgid "Meilleures ventes"
+msgstr "Best sellers"
+
+msgid "vendus"
+msgstr "sold"
+
+msgid "Stock à surveiller"
+msgstr "Stock to watch"
+
+msgid "restants"
+msgstr "left"
+
+msgid "Tous les stocks sont bons."
+msgstr "All stock levels are healthy."
+
+msgid "Aucune commande pour l'instant."
+msgstr "No orders yet."
+
+msgid "Pas encore de ventes."
+msgstr "No sales yet."
+
+msgid "Générer une description"
+msgstr "Generate a description"
+
+msgid "Générer la description"
+msgstr "Generate description"
+
+msgid "Nom de l'article"
+msgstr "Item name"
+
+msgid "Rayon"
+msgstr "Department"
+
+msgid "Mots-clés, matière, style (optionnel)"
+msgstr "Keywords, material, style (optional)"
+
+msgid "Enregistrer sur un article (optionnel)"
+msgstr "Save to an item (optional)"
+
+msgid "Ne pas enregistrer"
+msgstr "Do not save"
+
+msgid "Créer un visuel (à partir d'un modèle)"
+msgstr "Create a visual (from a template)"
+
+msgid "Titre affiché"
+msgstr "Displayed title"
+
+msgid "Sous-titre (optionnel)"
+msgstr "Subtitle (optional)"
+
+msgid "Type de vêtement"
+msgstr "Garment type"
+
+msgid "Ambiance (couleur)"
+msgstr "Mood (colour)"
+
+msgid "Teinte"
+msgstr "Shade"
+
+msgid "Ajouter aux photos d'un article (optionnel)"
+msgstr "Add to an item's photos (optional)"
+
+msgid "Aperçu seulement"
+msgstr "Preview only"
+
+msgid "Générer le visuel"
+msgstr "Generate visual"
+
+msgid "Télécharger"
+msgstr "Download"
+
+msgid "Gabarit"
+msgstr "Template"
+
+msgid "Indiquez au moins le nom de l'article."
+msgstr "Please provide at least the item name."
+
 msgid "Français"
 msgstr "French"
 

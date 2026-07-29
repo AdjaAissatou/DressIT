@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% load i18n store_extras %}
+
+{% block title %}{% trans "Tableau de bord" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="dash-head">
+        <div>
+            <h1>{% trans "Tableau de bord" %}</h1>
+            <p class="muted">{% trans "Vue d'ensemble de votre boutique DressIT" %}</p>
+        </div>
+        <div class="dash-actions">
+            <a href="{% url 'admin:store_product_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvel article" %}</a>
+            <a href="{% url 'admin:store_category_add' %}" class="btn btn-ghost btn-sm">＋ {% trans "Catégorie" %}</a>
+            <a href="{% url 'ai_studio' %}" class="btn btn-ghost btn-sm">✨ {% trans "Studio IA" %}</a>
+            <a href="{% url 'admin:index' %}" class="btn btn-ghost btn-sm">⚙ {% trans "Administration" %}</a>
+        </div>
+    </div>
+
+    <!-- Cartes statistiques -->
+    <div class="stat-grid">
+        <div class="stat-tile">
+            <span class="stat-label">{% trans "Chiffre d'affaires" %}</span>
+            <span class="stat-value">{{ revenue|money }}</span>
+            <span class="stat-sub">{% trans "30 j" %} : {{ revenue_30|money }}</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-label">{% trans "Commandes" %}</span>
+            <span class="stat-value">{{ orders_total }}</span>
+            <span class="stat-sub">{{ orders_pending }} {% trans "en attente" %}</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-label">{% trans "Clients" %}</span>
+            <span class="stat-value">{{ customers }}</span>
+            <span class="stat-sub">{% trans "comptes créés" %}</span>
+        </div>
+        <div class="stat-tile">
+            <span class="stat-label">{% trans "Articles" %}</span>
+            <span class="stat-value">{{ products_count }}</span>
+            <span class="stat-sub">{{ active_products }} {% trans "en vente" %} · {{ categories_count }} {% trans "catégories" %}</span>
+        </div>
+        <div class="stat-tile {% if out_of_stock_count %}alert{% endif %}">
+            <span class="stat-label">{% trans "Ruptures de stock" %}</span>
+            <span class="stat-value">{{ out_of_stock_count }}</span>
+            <span class="stat-sub">{{ low_stock_count }} {% trans "en stock faible" %}</span>
+        </div>
+    </div>
+
+    <div class="dash-cols">
+        <div>
+            <!-- Graphique ventes -->
+            <div class="panel">
+                <h3 class="dash-title">{% trans "Ventes des 14 derniers jours" %}</h3>
+                <div class="bar-chart" role="img" aria-label="{% trans 'Ventes quotidiennes' %}">
+                    {% for d in days %}
+                    <div class="bar-col">
+                        <div class="bar" style="height:{{ d.height }}%" title="{{ d.date|date:'d/m' }} — {{ d.total|money }}">
+                            {% if d.count %}<span class="bar-count">{{ d.count }}</span>{% endif %}
+                        </div>
+                        <span class="bar-x">{{ d.date|date:"d/m" }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Commandes récentes -->
+            <div class="panel" style="margin-top:20px;">
+                <h3 class="dash-title">{% trans "Commandes récentes" %}</h3>
+                {% if recent_orders %}
+                <table class="table">
+                    <thead><tr>
+                        <th>#</th><th>{% trans "Client" %}</th><th>{% trans "Statut" %}</th><th style="text-align:right;">{% trans "Total" %}</th>
+                    </tr></thead>
+                    <tbody>
+                    {% for o in recent_orders %}
+                    <tr>
+                        <td><a href="{% url 'admin:store_order_change' o.id %}">#{{ o.id }}</a></td>
+                        <td>{{ o.full_name }}<br><small class="muted">{{ o.created_at|date:"d/m H:i" }}</small></td>
+                        <td><span class="status-pill status-{{ o.status }}">{{ o.get_status_display }}</span></td>
+                        <td style="text-align:right;">{{ o.total|money }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<p class="muted">{% trans "Aucune commande pour l'instant." %}</p>{% endif %}
+            </div>
+        </div>
+
+        <div>
+            <!-- Répartition statuts -->
+            <div class="panel">
+                <h3 class="dash-title">{% trans "Statut des commandes" %}</h3>
+                {% for s in statuses %}
+                <div class="status-row">
+                    <span class="status-pill status-{{ s.code }}">{{ s.label }}</span>
+                    <strong>{{ s.n }}</strong>
+                </div>
+                {% empty %}<p class="muted">—</p>{% endfor %}
+            </div>
+
+            <!-- Meilleures ventes -->
+            <div class="panel" style="margin-top:20px;">
+                <h3 class="dash-title">{% trans "Meilleures ventes" %}</h3>
+                {% for p in top_products %}
+                <div class="status-row">
+                    <span>{{ forloop.counter }}. {{ p.product_name }}</span>
+                    <strong>{{ p.qty }} {% trans "vendus" %}</strong>
+                </div>
+                {% empty %}<p class="muted">{% trans "Pas encore de ventes." %}</p>{% endfor %}
+            </div>
+
+            <!-- Alertes stock -->
+            <div class="panel" style="margin-top:20px;">
+                <h3 class="dash-title">⚠ {% trans "Stock à surveiller" %}</h3>
+                {% for p in out_of_stock %}
+                <div class="status-row">
+                    <a href="{% url 'admin:store_product_change' p.id %}">{{ p.name }}</a>
+                    <span class="status-pill status-cancelled">{% trans "Épuisé" %}</span>
+                </div>
+                {% endfor %}
+                {% for p in low_stock %}
+                <div class="status-row">
+                    <a href="{% url 'admin:store_product_change' p.id %}">{{ p.name }}</a>
+                    <span class="status-pill status-pending">{{ p.stock }} {% trans "restants" %}</span>
+                </div>
+                {% endfor %}
+                {% if not out_of_stock and not low_stock %}
+                <p class="muted">✅ {% trans "Tous les stocks sont bons." %}</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

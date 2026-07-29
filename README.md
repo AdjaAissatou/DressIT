@@ -18,7 +18,10 @@ et texte clair.
 - 🌍 **Multilingue** : français 🇫🇷 et anglais 🇬🇧, bascule instantanée
 - 🖼️ **Gestion des photos** et des articles ultra simple via l'**administration Django**
 - 📦 **Gestion des commandes** côté admin (statuts : en attente, payée, expédiée, livrée, annulée)
-- ✨ **Images de démonstration générées automatiquement** (en attendant vos vraies photos)
+- 📊 **Tableau de bord** de gestion : chiffre d'affaires, ventes, meilleures ventes, alertes de stock
+- 📥 **Gestion du stock et de la disponibilité** (stock faible / ruptures, activer/désactiver un article)
+- ✨ **Studio IA** : génération de descriptions d'articles (Claude) et de visuels de marque
+- 🖼️ **Vraies photos de démonstration** (robes, chemises…), plusieurs par article
 
 ## 🚀 Démarrage rapide
 
@@ -63,6 +66,29 @@ Tout se passe dans l'**administration** (`/admin`) :
 
 Les **commandes** des clients arrivent automatiquement dans l'admin, où vous
 pouvez changer leur statut et voir le détail.
+
+## 📊 Gérer la boutique (tableau de bord & IA)
+
+Un espace de gestion réservé au personnel est disponible sur **`/gestion/`**
+(icône 📊 dans l'en-tête une fois connecté en tant qu'admin/staff) :
+
+- **Statistiques** : chiffre d'affaires, commandes, clients, ventes des 14 derniers
+  jours, meilleures ventes, répartition des statuts.
+- **Stock & disponibilité** : alertes de rupture et de stock faible ; modifiez le
+  stock et l'état « en vente » directement dans l'admin (colonnes éditables).
+- **Studio IA** (`/gestion/studio-ia/`) :
+  - **Descriptions** générées par **Claude** (si `ANTHROPIC_API_KEY` est défini),
+    avec repli automatique sur des gabarits hors-ligne.
+  - **Visuels de marque** générés à partir d'un modèle (silhouette + dégradé),
+    à télécharger ou à attacher directement aux photos d'un article.
+
+Pour activer Claude : `export ANTHROPIC_API_KEY=sk-ant-...` (et éventuellement
+`DRESSIT_AI_MODEL`, par défaut `claude-opus-5`). Pour des **photos IA
+photoréalistes**, branchez un service de génération d'images ; la structure est
+prête dans `store/ai.py`.
+
+> Ajouter de **nouveaux articles** ou de **nouvelles catégories** se fait dans
+> l'admin (`/admin`) — voir la section « Remplir vos articles » ci-dessus.
 
 ## 💳 Passer au paiement réel
 
