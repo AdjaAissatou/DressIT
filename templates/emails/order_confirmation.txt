@@ -1,14 +1,14 @@
-{% load i18n %}{% trans "Merci pour votre commande !" %}
+{% load i18n store_extras %}{% trans "Merci pour votre commande !" %}
 
 {% blocktrans with id=order.id %}Votre commande #{{ id }} a bien été enregistrée.{% endblocktrans %}
 
 {% trans "Récapitulatif :" %}
-{% for item in order.items.all %}- {{ item.quantity }} x {{ item.product_name }}{% if item.size %} ({{ item.size }}{% if item.color %}, {{ item.color }}{% endif %}){% elif item.color %} ({{ item.color }}){% endif %} : {{ item.subtotal|floatformat:2 }} {{ currency }}
+{% for item in order.items.all %}- {{ item.quantity }} x {{ item.product_name }}{% if item.size %} ({{ item.size }}{% if item.color %}, {{ item.color }}{% endif %}){% elif item.color %} ({{ item.color }}){% endif %} : {{ item.subtotal|money }}
 {% endfor %}
-{% trans "Sous-total" %} : {{ order.subtotal|floatformat:2 }} {{ currency }}
-{% if order.discount %}{% trans "Remise" %}{% if order.promo_code %} ({{ order.promo_code }}){% endif %} : -{{ order.discount|floatformat:2 }} {{ currency }}
-{% endif %}{% trans "Livraison" %} : {% if order.shipping_cost %}{{ order.shipping_cost|floatformat:2 }} {{ currency }}{% else %}{% trans "Offerte" %}{% endif %}
-{% trans "Total" %} : {{ order.total|floatformat:2 }} {{ currency }}
+{% trans "Sous-total" %} : {{ order.subtotal|money }}
+{% if order.discount %}{% trans "Remise" %}{% if order.promo_code %} ({{ order.promo_code }}){% endif %} : -{{ order.discount|money }}
+{% endif %}{% trans "Livraison" %} : {% if order.shipping_cost %}{{ order.shipping_cost|money }}{% else %}{% trans "Offerte" %}{% endif %}
+{% trans "Total" %} : {{ order.total|money }}
 
 {% trans "Mode de paiement" %} : {{ order.get_payment_method_display }}
 

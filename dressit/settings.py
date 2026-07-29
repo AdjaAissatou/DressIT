@@ -129,11 +129,11 @@ LOGOUT_REDIRECT_URL = "home"
 
 
 # Devise de la boutique (symbole affiché à côté des prix)
-DRESSIT_CURRENCY_SYMBOL = os.environ.get("DRESSIT_CURRENCY_SYMBOL", "€")
+DRESSIT_CURRENCY_SYMBOL = os.environ.get("DRESSIT_CURRENCY_SYMBOL", "FCFA")
 
-# Livraison : frais fixes, offerte au-delà d'un certain montant.
-DRESSIT_SHIPPING_FEE = os.environ.get("DRESSIT_SHIPPING_FEE", "4.90")
-DRESSIT_FREE_SHIPPING_THRESHOLD = os.environ.get("DRESSIT_FREE_SHIPPING_THRESHOLD", "50")
+# Livraison : frais fixes, offerte au-delà d'un certain montant (en FCFA).
+DRESSIT_SHIPPING_FEE = os.environ.get("DRESSIT_SHIPPING_FEE", "2000")
+DRESSIT_FREE_SHIPPING_THRESHOLD = os.environ.get("DRESSIT_FREE_SHIPPING_THRESHOLD", "30000")
 
 # E-mail : en développement, les messages s'affichent dans la console.
 # En production, définissez EMAIL_BACKEND SMTP via les variables d'environnement.

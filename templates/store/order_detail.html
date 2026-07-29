@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n store_extras %}
 
 {% block title %}{% trans "Commande" %} #{{ order.id }}{% endblock %}
 
@@ -34,28 +34,28 @@
                             {% endif %}
                         </td>
                         <td>{{ item.quantity }}</td>
-                        <td style="text-align:right;">{{ item.subtotal|floatformat:2 }} {{ currency }}</td>
+                        <td style="text-align:right;">{{ item.subtotal|money }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
                 <tfoot>
                     <tr>
                         <td colspan="2" class="muted">{% trans "Sous-total" %}</td>
-                        <td style="text-align:right;" class="muted">{{ order.subtotal|floatformat:2 }} {{ currency }}</td>
+                        <td style="text-align:right;" class="muted">{{ order.subtotal|money }}</td>
                     </tr>
                     {% if order.discount %}
                     <tr>
                         <td colspan="2" class="gold">{% trans "Remise" %}{% if order.promo_code %} ({{ order.promo_code }}){% endif %}</td>
-                        <td style="text-align:right;" class="gold">−{{ order.discount|floatformat:2 }} {{ currency }}</td>
+                        <td style="text-align:right;" class="gold">−{{ order.discount|money }}</td>
                     </tr>
                     {% endif %}
                     <tr>
                         <td colspan="2" class="muted">{% trans "Livraison" %}</td>
-                        <td style="text-align:right;" class="muted">{% if order.shipping_cost %}{{ order.shipping_cost|floatformat:2 }} {{ currency }}{% else %}{% trans "Offerte" %}{% endif %}</td>
+                        <td style="text-align:right;" class="muted">{% if order.shipping_cost %}{{ order.shipping_cost|money }}{% else %}{% trans "Offerte" %}{% endif %}</td>
                     </tr>
                     <tr>
                         <th colspan="2">{% trans "Total" %}</th>
-                        <th style="text-align:right;" class="gold">{{ order.total|floatformat:2 }} {{ currency }}</th>
+                        <th style="text-align:right;" class="gold">{{ order.total|money }}</th>
                     </tr>
                 </tfoot>
             </table>

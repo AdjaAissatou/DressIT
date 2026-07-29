@@ -1,4 +1,4 @@
-{% load i18n humanize %}
+{% load i18n humanize store_extras %}
 <article class="product-card">
     <div class="product-thumb">
         <a href="{{ product.get_absolute_url }}" class="thumb-link">
@@ -27,9 +27,9 @@
         </div>
         {% endif %}
         <div class="price-row">
-            <span class="price">{{ product.price|floatformat:2 }} {{ currency }}</span>
+            <span class="price">{{ product.price|money }}</span>
             {% if product.is_on_sale %}
-                <span class="price-old">{{ product.compare_at_price|floatformat:2 }} {{ currency }}</span>
+                <span class="price-old">{{ product.compare_at_price|money }}</span>
             {% endif %}
         </div>
     </div>

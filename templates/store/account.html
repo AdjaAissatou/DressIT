@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n store_extras %}
 
 {% block title %}{% trans "Mon compte" %}{% endblock %}
 
@@ -35,7 +35,7 @@
                     <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
                         <span class="muted">{{ order.item_count }} {% trans "article(s)" %} · {{ order.get_payment_method_display }}</span>
                         <div style="display:flex;align-items:center;gap:16px;">
-                            <strong class="gold" style="font-size:1.1rem;">{{ order.total|floatformat:2 }} {{ currency }}</strong>
+                            <strong class="gold" style="font-size:1.1rem;">{{ order.total|money }}</strong>
                             <a href="{% url 'order_detail' order.id %}" class="btn btn-ghost btn-sm">{% trans "Détails" %}</a>
                         </div>
                     </div>

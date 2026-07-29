@@ -4,6 +4,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext_lazy as _
 
+from .templatetags.store_extras import money
+
 from .models import (
     Category,
     Color,
@@ -154,7 +156,7 @@ class OrderAdmin(admin.ModelAdmin):
 
     @admin.display(description=_("Total"))
     def total_display(self, obj):
-        return f"{obj.total} €"
+        return money(obj.total)
 
 
 @admin.register(PromoCode)

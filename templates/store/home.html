@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load i18n static %}
+{% load i18n static store_extras %}
 
 {% block title %}{% trans "Accueil" %}{% endblock %}
 
@@ -22,7 +22,7 @@
 
     <!-- BANDEAU AVANTAGES -->
     <section class="features-strip">
-        <div class="feature"><span class="fi">🚚</span><div><strong>{% trans "Livraison offerte" %}</strong><small>{% blocktrans with amount=50 %}Dès {{ amount }} € d'achat{% endblocktrans %}</small></div></div>
+        <div class="feature"><span class="fi">🚚</span><div><strong>{% trans "Livraison offerte" %}</strong><small>{% trans "Dès" %} {{ cart.free_shipping_threshold|money }}</small></div></div>
         <div class="feature"><span class="fi">🔒</span><div><strong>{% trans "Paiement sécurisé" %}</strong><small>{% trans "Carte ou à la livraison" %}</small></div></div>
         <div class="feature"><span class="fi">↩️</span><div><strong>{% trans "Retours faciles" %}</strong><small>{% trans "Sous 30 jours" %}</small></div></div>
         <div class="feature"><span class="fi">💛</span><div><strong>{% trans "Les meilleurs prix" %}</strong><small>{% trans "Qualité au juste prix" %}</small></div></div>
@@ -33,7 +33,7 @@
     <section class="promo-banner">
         <div>
             <span class="eyebrow">{% trans "Offre de bienvenue" %}</span>
-            <h2>{% if highlight_promo.discount_type == 'percent' %}{% blocktrans with v=highlight_promo.value|floatformat:0 %}-{{ v }} % sur votre 1re commande{% endblocktrans %}{% else %}{% blocktrans with v=highlight_promo.value|floatformat:0 %}-{{ v }} € sur votre 1re commande{% endblocktrans %}{% endif %}</h2>
+            <h2>{% if highlight_promo.discount_type == 'percent' %}−{{ highlight_promo.value|floatformat:0 }} % {% trans "sur votre 1re commande" %}{% else %}−{{ highlight_promo.value|money }} {% trans "sur votre 1re commande" %}{% endif %}</h2>
         </div>
         <div class="promo-code-chip">
             <small>{% trans "Code" %}</small>
