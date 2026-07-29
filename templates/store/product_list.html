@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb">
+        <a href="{% url 'home' %}">{% trans "Accueil" %}</a> /
+        {% if category %}
+            {% if category.gender == 'homme' %}<a href="{% url 'shop_homme' %}">{% trans "Homme" %}</a> /
+            {% elif category.gender == 'femme' %}<a href="{% url 'shop_femme' %}">{% trans "Femme" %}</a> / {% endif %}
+        {% endif %}
+        <span>{{ title }}</span>
+    </div>
+
+    <div class="page-head">
+        <h1>{{ title }}</h1>
+        {% if category and category.description %}<p class="muted">{{ category.description }}</p>{% endif %}
+    </div>
+
+    <div class="shop-layout">
+        <!-- Filtres -->
+        <aside class="filters">
+            <form method="get" action="">
+                <h3>{% trans "Recherche" %}</h3>
+                <div class="search-box" style="max-width:none;margin-bottom:18px;">
+                    <input type="text" name="q" value="{{ query }}" class="input" placeholder="{% trans 'Rechercher…' %}">
+                </div>
+                {% if sort %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+                <button class="btn btn-primary btn-block btn-sm">{% trans "Rechercher" %}</button>
+            </form>
+
+            {% if categories %}
+            <h3 style="margin-top:24px;">{% trans "Catégories" %}</h3>
+            <ul class="filter-list">
+                {% if gender %}
+                <li><a href="?{% if query %}q={{ query }}&{% endif %}" class="{% if not active_category %}active{% endif %}">{% trans "Toutes" %}</a></li>
+                {% endif %}
+                {% for c in categories %}
+                <li>
+                    <a href="{% if gender %}?category={{ c.slug }}{% if query %}&q={{ query }}{% endif %}{% else %}{{ c.get_absolute_url }}{% endif %}"
+                       class="{% if active_category == c.slug or category.slug == c.slug %}active{% endif %}">{{ c.name }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        </aside>
+
+        <!-- Résultats -->
+        <div>
+            <div class="shop-toolbar">
+                <span class="muted">{{ page_obj.paginator.count }} {% trans "article(s)" %}</span>
+                <form method="get" action="" id="sort-form">
+                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+                    {% if active_category %}<input type="hidden" name="category" value="{{ active_category }}">{% endif %}
+                    <select name="sort" class="select" onchange="document.getElementById('sort-form').submit()" style="width:auto;">
+                        <option value="recent" {% if sort == 'recent' %}selected{% endif %}>{% trans "Plus récents" %}</option>
+                        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>{% trans "Prix croissant" %}</option>
+                        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>{% trans "Prix décroissant" %}</option>
+                        <option value="name" {% if sort == 'name' %}selected{% endif %}>{% trans "Nom (A-Z)" %}</option>
+                    </select>
+                </form>
+            </div>
+
+            {% if products %}
+            <div class="product-grid">
+                {% for product in products %}{% include "store/_product_card.html" %}{% endfor %}
+            </div>
+
+            {% if page_obj.has_other_pages %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if active_category %}&category={{ active_category }}{% endif %}">‹</a>
+                {% endif %}
+                {% for num in page_obj.paginator.page_range %}
+                    {% if num == page_obj.number %}
+                        <span class="current">{{ num }}</span>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <a href="?page={{ num }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if active_category %}&category={{ active_category }}{% endif %}">{{ num }}</a>
+                    {% endif %}
+                {% endfor %}
+                {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}{% if sort %}&sort={{ sort }}{% endif %}{% if active_category %}&category={{ active_category }}{% endif %}">›</a>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% else %}
+            <div class="empty-state">
+                <div class="icon">🔍</div>
+                <h3>{% trans "Aucun article trouvé" %}</h3>
+                <p>{% trans "Essayez de modifier votre recherche ou vos filtres." %}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,149 @@
+{% load static i18n humanize %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" data-theme="dark">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}DressIT{% endblock %} — DressIT</title>
+    <meta name="description" content="{% trans 'DressIT — mode Homme & Femme aux prix les plus abordables.' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dressit.css' %}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>👗</text></svg>">
+</head>
+<body>
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="{% url 'home' %}" class="brand">Dress<span class="dot">IT</span></a>
+
+        <nav class="main-nav">
+            <div class="nav-item">
+                <a href="{% url 'shop_femme' %}" class="nav-link">{% trans "Femme" %}</a>
+                {% if nav_categories_femme %}
+                <div class="dropdown-panel">
+                    {% for c in nav_categories_femme %}
+                        <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'shop_homme' %}" class="nav-link">{% trans "Homme" %}</a>
+                {% if nav_categories_homme %}
+                <div class="dropdown-panel">
+                    {% for c in nav_categories_homme %}
+                        <a href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            <div class="nav-item">
+                <a href="{% url 'shop' %}" class="nav-link">{% trans "Tout voir" %}</a>
+            </div>
+        </nav>
+
+        <div class="header-actions">
+            <form action="{% url 'set_language' %}" method="post" class="lang-form">
+                {% csrf_token %}
+                <input name="next" type="hidden" value="{{ request.path }}">
+                <select name="language" id="lang-select" class="lang-select" aria-label="{% trans 'Langue' %}">
+                    {% get_current_language as CURRENT %}
+                    {% get_available_languages as LANGS %}
+                    {% for code, name in LANGS %}
+                        <option value="{{ code }}" {% if code == CURRENT %}selected{% endif %}>
+                            {% if code == 'fr' %}🇫🇷 FR{% else %}🇬🇧 EN{% endif %}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+
+            <button id="theme-toggle" class="icon-btn" title="{% trans 'Changer de thème' %}" aria-label="{% trans 'Changer de thème' %}">☀️</button>
+
+            {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="icon-btn" title="{% trans 'Mon compte' %}">👤</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="icon-btn" title="{% trans 'Connexion' %}">👤</a>
+            {% endif %}
+
+            <a href="{% url 'cart' %}" class="icon-btn" title="{% trans 'Panier' %}">
+                🛍️
+                {% if cart_count %}<span class="cart-badge">{{ cart_count }}</span>{% endif %}
+            </a>
+
+            <button id="burger" class="icon-btn burger" aria-label="Menu">☰</button>
+        </div>
+    </div>
+
+    <nav class="mobile-nav" id="mobile-nav">
+        <a href="{% url 'shop_femme' %}">{% trans "Femme" %}</a>
+        <a href="{% url 'shop_homme' %}">{% trans "Homme" %}</a>
+        <a href="{% url 'shop' %}">{% trans "Tout voir" %}</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'account' %}">{% trans "Mon compte" %}</a>
+            <a href="{% url 'logout' %}" onclick="event.preventDefault();this.closest('nav').querySelector('#logout-form-m').submit();">{% trans "Déconnexion" %}</a>
+            <form id="logout-form-m" action="{% url 'logout' %}" method="post" hidden>{% csrf_token %}</form>
+        {% else %}
+            <a href="{% url 'login' %}">{% trans "Connexion" %}</a>
+            <a href="{% url 'signup' %}">{% trans "Créer un compte" %}</a>
+        {% endif %}
+    </nav>
+</header>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+        <div class="toast {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <a href="{% url 'home' %}" class="brand">Dress<span class="dot">IT</span></a>
+                <p class="muted" style="margin-top:12px;max-width:280px;">
+                    {% trans "La mode Homme & Femme aux prix les plus abordables. Élégance, qualité et petits prix." %}
+                </p>
+            </div>
+            <div>
+                <h4>{% trans "Boutique" %}</h4>
+                <ul>
+                    <li><a href="{% url 'shop_femme' %}">{% trans "Femme" %}</a></li>
+                    <li><a href="{% url 'shop_homme' %}">{% trans "Homme" %}</a></li>
+                    <li><a href="{% url 'shop' %}">{% trans "Nouveautés" %}</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>{% trans "Mon compte" %}</h4>
+                <ul>
+                    <li><a href="{% url 'account' %}">{% trans "Mes commandes" %}</a></li>
+                    <li><a href="{% url 'cart' %}">{% trans "Mon panier" %}</a></li>
+                    {% if not user.is_authenticated %}
+                    <li><a href="{% url 'signup' %}">{% trans "Créer un compte" %}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div>
+                <h4>{% trans "Aide" %}</h4>
+                <ul>
+                    <li><a href="#">{% trans "Livraison" %}</a></li>
+                    <li><a href="#">{% trans "Retours" %}</a></li>
+                    <li><a href="#">{% trans "Contact" %}</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © {% now "Y" %} DressIT — {% trans "Tous droits réservés." %}
+        </div>
+    </div>
+</footer>
+
+<script src="{% static 'js/dressit.js' %}"></script>
+</body>
+</html>

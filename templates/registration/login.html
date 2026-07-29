@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Connexion" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="auth-wrap">
+        <div class="panel">
+            <h1 style="text-align:center;">{% trans "Connexion" %}</h1>
+            <p class="muted text-center">{% trans "Ravi de vous revoir chez DressIT" %}</p>
+
+            {% if form.errors %}
+            <ul class="errorlist" style="text-align:center;">
+                <li>{% trans "Identifiant ou mot de passe incorrect." %}</li>
+            </ul>
+            {% endif %}
+
+            <form method="post" action="{% url 'login' %}" style="margin-top:20px;">
+                {% csrf_token %}
+                <div class="form-field">
+                    <label for="{{ form.username.id_for_label }}">{% trans "Nom d'utilisateur" %}</label>
+                    <input type="text" name="username" id="{{ form.username.id_for_label }}" class="input" required autofocus>
+                </div>
+                <div class="form-field">
+                    <label for="{{ form.password.id_for_label }}">{% trans "Mot de passe" %}</label>
+                    <input type="password" name="password" id="{{ form.password.id_for_label }}" class="input" required>
+                </div>
+                <input type="hidden" name="next" value="{{ next }}">
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top:12px;">{% trans "Se connecter" %}</button>
+            </form>
+
+            <p class="text-center muted" style="margin-top:18px;">
+                {% trans "Pas encore de compte ?" %} <a href="{% url 'signup' %}" class="gold">{% trans "Créer un compte" %}</a>
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

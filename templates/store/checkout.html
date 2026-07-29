@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Commander" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head"><h1>{% trans "Finaliser ma commande" %}</h1></div>
+
+    <form method="post" action="">
+        {% csrf_token %}
+        <div class="cart-layout">
+            <div>
+                <div class="panel" style="margin-bottom:20px;">
+                    <h3 style="font-family:var(--font-body);text-transform:uppercase;letter-spacing:1px;font-size:1rem;">📦 {% trans "Adresse de livraison" %}</h3>
+                    {% if form.non_field_errors %}<ul class="errorlist">{{ form.non_field_errors }}</ul>{% endif %}
+                    <div class="form-grid">
+                        <div class="form-field full">
+                            <label for="{{ form.full_name.id_for_label }}">{% trans "Nom complet" %}</label>
+                            {{ form.full_name }}{{ form.full_name.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.email.id_for_label }}">{% trans "E-mail" %}</label>
+                            {{ form.email }}{{ form.email.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.phone.id_for_label }}">{% trans "Téléphone" %}</label>
+                            {{ form.phone }}{{ form.phone.errors }}
+                        </div>
+                        <div class="form-field full">
+                            <label for="{{ form.address.id_for_label }}">{% trans "Adresse" %}</label>
+                            {{ form.address }}{{ form.address.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.city.id_for_label }}">{% trans "Ville" %}</label>
+                            {{ form.city }}{{ form.city.errors }}
+                        </div>
+                        <div class="form-field">
+                            <label for="{{ form.postal_code.id_for_label }}">{% trans "Code postal" %}</label>
+                            {{ form.postal_code }}{{ form.postal_code.errors }}
+                        </div>
+                        <div class="form-field full">
+                            <label for="{{ form.country.id_for_label }}">{% trans "Pays" %}</label>
+                            {{ form.country }}{{ form.country.errors }}
+                        </div>
+                        <div class="form-field full">
+                            <label for="{{ form.note.id_for_label }}">{% trans "Note (optionnel)" %}</label>
+                            {{ form.note }}{{ form.note.errors }}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel">
+                    <h3 style="font-family:var(--font-body);text-transform:uppercase;letter-spacing:1px;font-size:1rem;">💳 {% trans "Mode de paiement" %}</h3>
+                    <div class="pay-methods">
+                        {% for radio in form.payment_method %}
+                            <label>{{ radio.tag }} <span>{{ radio.choice_label }}</span></label>
+                        {% endfor %}
+                    </div>
+                    <p class="muted" style="font-size:0.82rem;margin-top:12px;">
+                        {% trans "Paiement 100 % sécurisé. Le paiement par carte est ici en mode démonstration — branchez Stripe ou PayPal pour encaisser réellement." %}
+                    </p>
+                </div>
+            </div>
+
+            <aside class="summary">
+                <h3>{% trans "Ma commande" %}</h3>
+                {% for item in cart %}
+                <div class="summary-row" style="font-size:0.9rem;">
+                    <span>{{ item.quantity }} × {{ item.product.name }}</span>
+                    <span>{{ item.subtotal|floatformat:2 }} {{ currency }}</span>
+                </div>
+                {% endfor %}
+                <div class="summary-row total">
+                    <span>{% trans "Total" %}</span>
+                    <span class="gold">{{ cart.total|floatformat:2 }} {{ currency }}</span>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top:18px;">✅ {% trans "Confirmer la commande" %}</button>
+                <a href="{% url 'cart' %}" class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">← {% trans "Retour au panier" %}</a>
+            </aside>
+        </div>
+    </form>
+</div>
+{% endblock %}

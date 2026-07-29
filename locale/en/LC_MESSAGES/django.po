@@ -1,0 +1,424 @@
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: DressIT 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Femme"
+msgstr "Women"
+
+msgid "Homme"
+msgstr "Men"
+
+msgid "Unisexe"
+msgstr "Unisex"
+
+msgid "Tout voir"
+msgstr "Shop all"
+
+msgid "Boutique"
+msgstr "Shop"
+
+msgid "Nouveautés"
+msgstr "New arrivals"
+
+msgid "Mon compte"
+msgstr "My account"
+
+msgid "Connexion"
+msgstr "Log in"
+
+msgid "Déconnexion"
+msgstr "Log out"
+
+msgid "Panier"
+msgstr "Cart"
+
+msgid "Langue"
+msgstr "Language"
+
+msgid "Changer de thème"
+msgstr "Switch theme"
+
+msgid "Créer un compte"
+msgstr "Create account"
+
+msgid "Accueil"
+msgstr "Home"
+
+msgid "Aide"
+msgstr "Help"
+
+msgid "Livraison"
+msgstr "Shipping"
+
+msgid "Retours"
+msgstr "Returns"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "Tous droits réservés."
+msgstr "All rights reserved."
+
+msgid "Mes commandes"
+msgstr "My orders"
+
+msgid "Mon panier"
+msgstr "My cart"
+
+msgid "DressIT — mode Homme & Femme aux prix les plus abordables."
+msgstr "DressIT — Men's & Women's fashion at the most affordable prices."
+
+msgid ""
+"La mode Homme & Femme aux prix les plus abordables. Élégance, qualité et "
+"petits prix."
+msgstr ""
+"Men's & Women's fashion at the most affordable prices. Elegance, quality and"
+" low prices."
+
+msgid "Nouvelle collection"
+msgstr "New collection"
+
+msgid "L'élégance à petit prix"
+msgstr "Elegance at a small price"
+
+msgid ""
+"Découvrez notre sélection Homme & Femme : des pièces raffinées, une qualité "
+"soignée et les prix les plus abordables du marché."
+msgstr ""
+"Discover our Men's & Women's selection: refined pieces, careful quality and "
+"the most affordable prices on the market."
+
+msgid "Collection Femme"
+msgstr "Women's collection"
+
+msgid "Collection Homme"
+msgstr "Men's collection"
+
+msgid "Prix les plus abordables — satisfaction garantie"
+msgstr "Most affordable prices — satisfaction guaranteed"
+
+msgid "Rayon Femme"
+msgstr "Women's department"
+
+msgid "Rayon Homme"
+msgstr "Men's department"
+
+msgid "Trouvez votre style"
+msgstr "Find your style"
+
+msgid "Le vestiaire masculin"
+msgstr "The men's wardrobe"
+
+msgid "Voir tout"
+msgstr "See all"
+
+msgid "Coups de cœur"
+msgstr "Favourites"
+
+msgid "Notre sélection du moment"
+msgstr "Our current selection"
+
+msgid "Bons plans"
+msgstr "Great deals"
+
+msgid "Des prix encore plus doux"
+msgstr "Even sweeter prices"
+
+msgid "Fraîchement arrivés"
+msgstr "Freshly arrived"
+
+msgid "La boutique se prépare"
+msgstr "The shop is getting ready"
+
+msgid ""
+"Aucun article pour le moment. Ajoutez vos produits depuis l'administration."
+msgstr "No items yet. Add your products from the admin panel."
+
+msgid "Recherche"
+msgstr "Search"
+
+msgid "Rechercher…"
+msgstr "Search…"
+
+msgid "Rechercher"
+msgstr "Search"
+
+msgid "Catégories"
+msgstr "Categories"
+
+msgid "Toutes"
+msgstr "All"
+
+msgid "article(s)"
+msgstr "item(s)"
+
+msgid "Plus récents"
+msgstr "Most recent"
+
+msgid "Prix croissant"
+msgstr "Price: low to high"
+
+msgid "Prix décroissant"
+msgstr "Price: high to low"
+
+msgid "Nom (A-Z)"
+msgstr "Name (A-Z)"
+
+msgid "Aucun article trouvé"
+msgstr "No items found"
+
+msgid "Essayez de modifier votre recherche ou vos filtres."
+msgstr "Try changing your search or filters."
+
+msgid "Épuisé"
+msgstr "Sold out"
+
+msgid "En stock"
+msgstr "In stock"
+
+msgid "Taille"
+msgstr "Size"
+
+msgid "Couleur"
+msgstr "Colour"
+
+msgid "Quantité"
+msgstr "Quantity"
+
+msgid "Ajouter au panier"
+msgstr "Add to cart"
+
+msgid "Article épuisé"
+msgstr "Item sold out"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Vous aimerez aussi"
+msgstr "You may also like"
+
+msgid "Article"
+msgstr "Item"
+
+msgid "unité"
+msgstr "unit"
+
+msgid "Retirer"
+msgstr "Remove"
+
+msgid "Continuer mes achats"
+msgstr "Continue shopping"
+
+msgid "Récapitulatif"
+msgstr "Summary"
+
+msgid "Sous-total"
+msgstr "Subtotal"
+
+msgid "Calculée à la commande"
+msgstr "Calculated at checkout"
+
+msgid "Total"
+msgstr "Total"
+
+msgid "Passer commande"
+msgstr "Checkout"
+
+msgid "Votre panier est vide"
+msgstr "Your cart is empty"
+
+msgid "Parcourez la boutique et ajoutez vos articles préférés."
+msgstr "Browse the shop and add your favourite items."
+
+msgid "Découvrir la boutique"
+msgstr "Explore the shop"
+
+msgid "Article retiré du panier."
+msgstr "Item removed from cart."
+
+msgid "Votre panier est vide."
+msgstr "Your cart is empty."
+
+msgid "Commander"
+msgstr "Checkout"
+
+msgid "Finaliser ma commande"
+msgstr "Complete my order"
+
+msgid "Adresse de livraison"
+msgstr "Shipping address"
+
+msgid "Nom complet"
+msgstr "Full name"
+
+msgid "E-mail"
+msgstr "Email"
+
+msgid "Téléphone"
+msgstr "Phone"
+
+msgid "Adresse"
+msgstr "Address"
+
+msgid "Ville"
+msgstr "City"
+
+msgid "Code postal"
+msgstr "Postal code"
+
+msgid "Pays"
+msgstr "Country"
+
+msgid "Note (optionnel)"
+msgstr "Note (optional)"
+
+msgid "Mode de paiement"
+msgstr "Payment method"
+
+msgid "Carte bancaire"
+msgstr "Credit card"
+
+msgid "Paiement à la livraison"
+msgstr "Cash on delivery"
+
+msgid ""
+"Paiement 100 % sécurisé. Le paiement par carte est ici en mode démonstration"
+" — branchez Stripe ou PayPal pour encaisser réellement."
+msgstr ""
+"100% secure payment. Card payment is in demo mode here — connect Stripe or "
+"PayPal to charge for real."
+
+msgid "Ma commande"
+msgstr "My order"
+
+msgid "Confirmer la commande"
+msgstr "Confirm order"
+
+msgid "Retour au panier"
+msgstr "Back to cart"
+
+msgid "Commande confirmée"
+msgstr "Order confirmed"
+
+msgid "Merci pour votre commande !"
+msgstr "Thank you for your order!"
+
+msgid "Paiement confirmé (démonstration)."
+msgstr "Payment confirmed (demo)."
+
+msgid "Vous paierez à la livraison."
+msgstr "You will pay on delivery."
+
+msgid "Voir mes commandes"
+msgstr "View my orders"
+
+msgid "Bonjour"
+msgstr "Hello"
+
+msgid "Mot de passe"
+msgstr "Password"
+
+msgid "Historique des commandes"
+msgstr "Order history"
+
+msgid "Commande"
+msgstr "Order"
+
+msgid "Détails"
+msgstr "Details"
+
+msgid "Aucune commande pour l'instant"
+msgstr "No orders yet"
+
+msgid "Vos futures commandes apparaîtront ici."
+msgstr "Your future orders will appear here."
+
+msgid "Faire du shopping"
+msgstr "Go shopping"
+
+msgid "Informations"
+msgstr "Information"
+
+msgid "Payée"
+msgstr "Paid"
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Paiement"
+msgstr "Payment"
+
+msgid "Qté"
+msgstr "Qty"
+
+msgid "En attente"
+msgstr "Pending"
+
+msgid "Expédiée"
+msgstr "Shipped"
+
+msgid "Livrée"
+msgstr "Delivered"
+
+msgid "Annulée"
+msgstr "Cancelled"
+
+msgid "Ravi de vous revoir chez DressIT"
+msgstr "Welcome back to DressIT"
+
+msgid "Identifiant ou mot de passe incorrect."
+msgstr "Incorrect username or password."
+
+msgid "Nom d'utilisateur"
+msgstr "Username"
+
+msgid "Se connecter"
+msgstr "Sign in"
+
+msgid "Pas encore de compte ?"
+msgstr "No account yet?"
+
+msgid "Rejoignez DressIT et suivez vos commandes"
+msgstr "Join DressIT and track your orders"
+
+msgid "Prénom"
+msgstr "First name"
+
+msgid "Créer mon compte"
+msgstr "Create my account"
+
+msgid "Déjà inscrit·e ?"
+msgstr "Already registered?"
+
+msgid "Changer de mot de passe"
+msgstr "Change password"
+
+msgid "Valider"
+msgstr "Confirm"
+
+msgid "Retour"
+msgstr "Back"
+
+msgid "Mot de passe modifié"
+msgstr "Password changed"
+
+msgid "Votre mot de passe a bien été mis à jour."
+msgstr "Your password has been updated."
+
+msgid "Retour à mon compte"
+msgstr "Back to my account"
+
+msgid "Bienvenue chez DressIT, votre compte a été créé !"
+msgstr "Welcome to DressIT, your account has been created!"
+
+msgid "Français"
+msgstr "French"
+
+msgid "English"
+msgstr "English"

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Commande confirmée" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="panel text-center" style="max-width:640px;margin:50px auto;">
+        <div style="font-size:3.5rem;">🎉</div>
+        <h1>{% trans "Merci pour votre commande !" %}</h1>
+        <p class="muted">{% blocktrans with id=order.id %}Votre commande <strong>#{{ id }}</strong> a bien été enregistrée.{% endblocktrans %}</p>
+
+        {% if order.payment_method == 'card' %}
+            <p class="gold">✅ {% trans "Paiement confirmé (démonstration)." %}</p>
+        {% else %}
+            <p class="gold">📦 {% trans "Vous paierez à la livraison." %}</p>
+        {% endif %}
+
+        <div style="text-align:left;margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">
+            <table class="table">
+                {% for item in order.items.all %}
+                <tr>
+                    <td>{{ item.quantity }} × {{ item.product_name }}
+                        {% if item.size %}<small class="muted">({{ item.size }}{% if item.color %}, {{ item.color }}{% endif %})</small>
+                        {% elif item.color %}<small class="muted">({{ item.color }})</small>{% endif %}
+                    </td>
+                    <td style="text-align:right;">{{ item.subtotal|floatformat:2 }} {{ currency }}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <th>{% trans "Total" %}</th>
+                    <th style="text-align:right;" class="gold">{{ order.total|floatformat:2 }} {{ currency }}</th>
+                </tr>
+            </table>
+        </div>
+
+        <div style="margin-top:24px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            {% if user.is_authenticated %}
+                <a href="{% url 'account' %}" class="btn btn-primary">{% trans "Voir mes commandes" %}</a>
+            {% endif %}
+            <a href="{% url 'shop' %}" class="btn btn-ghost">{% trans "Continuer mes achats" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

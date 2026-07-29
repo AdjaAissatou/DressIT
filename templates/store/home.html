@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "Accueil" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <span class="eyebrow">{% trans "Nouvelle collection" %}</span>
+            <h1>{% trans "L'élégance à petit prix" %}</h1>
+            <p>{% trans "Découvrez notre sélection Homme & Femme : des pièces raffinées, une qualité soignée et les prix les plus abordables du marché." %}</p>
+            <div class="hero-cta">
+                <a href="{% url 'shop_femme' %}" class="btn btn-primary">{% trans "Collection Femme" %}</a>
+                <a href="{% url 'shop_homme' %}" class="btn btn-outline" style="border-color:#fff;color:#fff;">{% trans "Collection Homme" %}</a>
+            </div>
+            <div class="price-badge">✨ {% trans "Prix les plus abordables — satisfaction garantie" %}</div>
+        </div>
+    </section>
+
+    <!-- CATÉGORIES FEMME -->
+    {% if categories_femme %}
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>{% trans "Rayon Femme" %}</h2>
+                <span class="subtitle">{% trans "Trouvez votre style" %}</span>
+            </div>
+            <a href="{% url 'shop_femme' %}" class="see-all">{% trans "Voir tout" %} →</a>
+        </div>
+        <div class="category-grid">
+            {% for c in categories_femme|slice:":4" %}
+            <a href="{{ c.get_absolute_url }}" class="category-card {% if not c.image %}placeholder{% endif %}">
+                {% if c.image %}<img src="{{ c.image.url }}" alt="{{ c.name }}">{% endif %}
+                <div class="overlay">
+                    <span>{% trans "Femme" %}</span>
+                    <h3>{{ c.name }}</h3>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- CATÉGORIES HOMME -->
+    {% if categories_homme %}
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>{% trans "Rayon Homme" %}</h2>
+                <span class="subtitle">{% trans "Le vestiaire masculin" %}</span>
+            </div>
+            <a href="{% url 'shop_homme' %}" class="see-all">{% trans "Voir tout" %} →</a>
+        </div>
+        <div class="category-grid">
+            {% for c in categories_homme|slice:":4" %}
+            <a href="{{ c.get_absolute_url }}" class="category-card {% if not c.image %}placeholder{% endif %}">
+                {% if c.image %}<img src="{{ c.image.url }}" alt="{{ c.name }}">{% endif %}
+                <div class="overlay">
+                    <span>{% trans "Homme" %}</span>
+                    <h3>{{ c.name }}</h3>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- MISE EN AVANT -->
+    {% if featured %}
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>{% trans "Coups de cœur" %}</h2>
+                <span class="subtitle">{% trans "Notre sélection du moment" %}</span>
+            </div>
+            <a href="{% url 'shop' %}" class="see-all">{% trans "Voir tout" %} →</a>
+        </div>
+        <div class="product-grid">
+            {% for product in featured %}{% include "store/_product_card.html" %}{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- PROMOS -->
+    {% if on_sale %}
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>{% trans "Bons plans" %} 🔥</h2>
+                <span class="subtitle">{% trans "Des prix encore plus doux" %}</span>
+            </div>
+        </div>
+        <div class="product-grid">
+            {% for product in on_sale %}{% include "store/_product_card.html" %}{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- NOUVEAUTÉS -->
+    {% if new_arrivals %}
+    <section class="section">
+        <div class="section-head">
+            <div>
+                <h2>{% trans "Nouveautés" %}</h2>
+                <span class="subtitle">{% trans "Fraîchement arrivés" %}</span>
+            </div>
+            <a href="{% url 'shop' %}" class="see-all">{% trans "Voir tout" %} →</a>
+        </div>
+        <div class="product-grid">
+            {% for product in new_arrivals %}{% include "store/_product_card.html" %}{% endfor %}
+        </div>
+    </section>
+    {% else %}
+    <section class="section">
+        <div class="empty-state">
+            <div class="icon">🛍️</div>
+            <h3>{% trans "La boutique se prépare" %}</h3>
+            <p>{% trans "Aucun article pour le moment. Ajoutez vos produits depuis l'administration." %}</p>
+        </div>
+    </section>
+    {% endif %}
+
+</div>
+{% endblock %}

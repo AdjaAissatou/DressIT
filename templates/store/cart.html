@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Panier" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head"><h1>{% trans "Mon panier" %}</h1></div>
+
+    {% if cart|length %}
+    <div class="cart-layout">
+        <div class="cart-items">
+            {% for item in cart %}
+            <div class="cart-row">
+                <a href="{{ item.product.get_absolute_url }}" class="thumb">
+                    {% if item.product.main_image %}
+                        <img src="{{ item.product.main_image.url }}" alt="{{ item.product.name }}">
+                    {% else %}<div class="no-photo" style="font-size:1.6rem;">👗</div>{% endif %}
+                </a>
+                <div class="meta">
+                    <strong><a href="{{ item.product.get_absolute_url }}">{{ item.product.name }}</a></strong>
+                    {% if item.size %}<small>{% trans "Taille" %}: {{ item.size }}</small>{% endif %}
+                    {% if item.color %}<small>{% trans "Couleur" %}: {{ item.color }}</small>{% endif %}
+                    <small>{{ item.price|floatformat:2 }} {{ currency }} / {% trans "unité" %}</small>
+                    <form class="cart-qty-form" method="post" action="{% url 'cart_update' item.key %}" style="margin-top:8px;">
+                        {% csrf_token %}
+                        <div class="qty-control">
+                            <button type="button" data-action="dec">−</button>
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1">
+                            <button type="button" data-action="inc">+</button>
+                        </div>
+                    </form>
+                </div>
+                <div style="text-align:right;">
+                    <div class="line-price">{{ item.subtotal|floatformat:2 }} {{ currency }}</div>
+                    <form method="post" action="{% url 'cart_remove' item.key %}">
+                        {% csrf_token %}
+                        <button class="remove" type="submit">🗑 {% trans "Retirer" %}</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
+            <a href="{% url 'shop' %}" class="btn btn-ghost btn-sm" style="align-self:flex-start;">← {% trans "Continuer mes achats" %}</a>
+        </div>
+
+        <aside class="summary">
+            <h3>{% trans "Récapitulatif" %}</h3>
+            <div class="summary-row">
+                <span>{% trans "Sous-total" %}</span>
+                <span>{{ cart.total|floatformat:2 }} {{ currency }}</span>
+            </div>
+            <div class="summary-row">
+                <span>{% trans "Livraison" %}</span>
+                <span class="gold">{% trans "Calculée à la commande" %}</span>
+            </div>
+            <div class="summary-row total">
+                <span>{% trans "Total" %}</span>
+                <span class="gold">{{ cart.total|floatformat:2 }} {{ currency }}</span>
+            </div>
+            <a href="{% url 'checkout' %}" class="btn btn-primary btn-block" style="margin-top:18px;">{% trans "Passer commande" %} →</a>
+        </aside>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">🛍️</div>
+        <h3>{% trans "Votre panier est vide" %}</h3>
+        <p>{% trans "Parcourez la boutique et ajoutez vos articles préférés." %}</p>
+        <a href="{% url 'shop' %}" class="btn btn-primary" style="margin-top:16px;">{% trans "Découvrir la boutique" %}</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

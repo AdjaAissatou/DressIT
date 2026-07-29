@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Commande" %} #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb">
+        <a href="{% url 'account' %}">{% trans "Mon compte" %}</a> / <span>{% trans "Commande" %} #{{ order.id }}</span>
+    </div>
+    <div class="page-head" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <h1>{% trans "Commande" %} #{{ order.id }}</h1>
+        <span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span>
+    </div>
+
+    <div class="cart-layout">
+        <div class="panel">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>{% trans "Article" %}</th>
+                        <th>{% trans "Qté" %}</th>
+                        <th style="text-align:right;">{% trans "Total" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>
+                            {% if item.product %}<a href="{{ item.product.get_absolute_url }}">{{ item.product_name }}</a>
+                            {% else %}{{ item.product_name }}{% endif %}
+                            {% if item.size or item.color %}
+                            <br><small class="muted">{% if item.size %}{% trans "Taille" %}: {{ item.size }}{% endif %}{% if item.color %} · {% trans "Couleur" %}: {{ item.color }}{% endif %}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ item.quantity }}</td>
+                        <td style="text-align:right;">{{ item.subtotal|floatformat:2 }} {{ currency }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="2">{% trans "Total" %}</th>
+                        <th style="text-align:right;" class="gold">{{ order.total|floatformat:2 }} {{ currency }}</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <aside class="summary">
+            <h3>{% trans "Informations" %}</h3>
+            <p style="margin:6px 0;"><strong>{% trans "Livraison" %}</strong><br>
+                {{ order.full_name }}<br>
+                {{ order.address }}<br>
+                {{ order.postal_code }} {{ order.city }}<br>
+                {{ order.country }}<br>
+                📞 {{ order.phone }}
+            </p>
+            <div class="summary-row"><span>{% trans "Paiement" %}</span><span>{{ order.get_payment_method_display }}</span></div>
+            <div class="summary-row"><span>{% trans "Payée" %}</span><span>{% if order.paid %}✅{% else %}⏳{% endif %}</span></div>
+            <div class="summary-row"><span>{% trans "Date" %}</span><span>{{ order.created_at|date:"d/m/Y" }}</span></div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mon compte" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head">
+        <h1>{% trans "Bonjour" %}, {{ user.first_name|default:user.username }} 👋</h1>
+    </div>
+
+    <div class="account-grid">
+        <aside class="account-nav">
+            <a href="{% url 'account' %}" style="border-color:var(--accent);color:var(--accent);">🧾 {% trans "Mes commandes" %}</a>
+            <a href="{% url 'password_change' %}">🔒 {% trans "Mot de passe" %}</a>
+            <a href="{% url 'cart' %}">🛍️ {% trans "Mon panier" %}</a>
+            <form action="{% url 'logout' %}" method="post" style="margin-top:6px;">
+                {% csrf_token %}
+                <button class="btn btn-ghost btn-block btn-sm" type="submit">↩ {% trans "Déconnexion" %}</button>
+            </form>
+        </aside>
+
+        <div>
+            <h2 style="font-size:1.4rem;">{% trans "Historique des commandes" %}</h2>
+            {% if orders %}
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-head">
+                        <div>
+                            <strong>{% trans "Commande" %} #{{ order.id }}</strong>
+                            <span class="muted"> · {{ order.created_at|date:"d/m/Y H:i" }}</span>
+                        </div>
+                        <span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span>
+                    </div>
+                    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+                        <span class="muted">{{ order.item_count }} {% trans "article(s)" %} · {{ order.get_payment_method_display }}</span>
+                        <div style="display:flex;align-items:center;gap:16px;">
+                            <strong class="gold" style="font-size:1.1rem;">{{ order.total|floatformat:2 }} {{ currency }}</strong>
+                            <a href="{% url 'order_detail' order.id %}" class="btn btn-ghost btn-sm">{% trans "Détails" %}</a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div class="icon">🧾</div>
+                    <h3>{% trans "Aucune commande pour l'instant" %}</h3>
+                    <p>{% trans "Vos futures commandes apparaîtront ici." %}</p>
+                    <a href="{% url 'shop' %}" class="btn btn-primary" style="margin-top:14px;">{% trans "Faire du shopping" %}</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

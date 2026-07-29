@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="breadcrumb">
+        <a href="{% url 'home' %}">{% trans "Accueil" %}</a> /
+        {% if product.gender == 'homme' %}<a href="{% url 'shop_homme' %}">{% trans "Homme" %}</a>
+        {% elif product.gender == 'femme' %}<a href="{% url 'shop_femme' %}">{% trans "Femme" %}</a>
+        {% else %}<a href="{% url 'shop' %}">{% trans "Boutique" %}</a>{% endif %} /
+        <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a> /
+        <span>{{ product.name }}</span>
+    </div>
+
+    <div class="product-detail">
+        <!-- Galerie -->
+        <div>
+            <div class="gallery-main">
+                {% if product.main_image %}
+                    <img id="gallery-main-img" src="{{ product.main_image.url }}" alt="{{ product.name }}">
+                {% else %}
+                    <div class="no-photo">👗</div>
+                {% endif %}
+            </div>
+            {% if product.images.count > 1 %}
+            <div class="gallery-thumbs">
+                {% for img in product.images.all %}
+                    <img src="{{ img.image.url }}" data-full="{{ img.image.url }}"
+                         alt="{{ img.alt|default:product.name }}" class="{% if forloop.first %}active{% endif %}">
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Infos & achat -->
+        <div class="detail-info">
+            <span class="cat muted" style="text-transform:uppercase;letter-spacing:1px;font-size:0.8rem;">{{ product.category.name }} · {{ product.get_gender_display }}</span>
+            <h1>{{ product.name }}</h1>
+
+            <div class="detail-price">
+                <span class="price">{{ product.price|floatformat:2 }} {{ currency }}</span>
+                {% if product.is_on_sale %}
+                    <span class="price-old">{{ product.compare_at_price|floatformat:2 }} {{ currency }}</span>
+                    <span class="badge badge-sale" style="position:static;">-{{ product.discount_percent }}%</span>
+                {% endif %}
+            </div>
+
+            <!-- Stock -->
+            {% if product.in_stock %}
+                {% if product.stock <= 5 %}
+                    <div class="stock-line"><span class="dot-status low-stock"></span>{% blocktrans count counter=product.stock %}Plus qu'un article !{% plural %}Plus que {{ counter }} en stock{% endblocktrans %}</div>
+                {% else %}
+                    <div class="stock-line"><span class="dot-status in-stock"></span>{% trans "En stock" %}</div>
+                {% endif %}
+            {% else %}
+                <div class="stock-line"><span class="dot-status out-stock"></span>{% trans "Épuisé" %}</div>
+            {% endif %}
+
+            <form method="post" action="{% url 'cart_add' product.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="detail">
+
+                {% if product.sizes.all %}
+                <div class="option-group">
+                    <label>{% trans "Taille" %}</label>
+                    <div class="option-pills">
+                        {% for size in product.sizes.all %}
+                            <input type="radio" name="size" id="size-{{ size.id }}" value="{{ size.label }}" {% if forloop.first %}checked{% endif %}>
+                            <label for="size-{{ size.id }}">{{ size.label }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if product.colors.all %}
+                <div class="option-group">
+                    <label>{% trans "Couleur" %}</label>
+                    <div class="option-pills color-pills">
+                        {% for color in product.colors.all %}
+                            <input type="radio" name="color" id="color-{{ color.id }}" value="{{ color.name }}" {% if forloop.first %}checked{% endif %}>
+                            <label for="color-{{ color.id }}"><span class="dot" style="background:{{ color.hex_code }}"></span>{{ color.name }}</label>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if product.in_stock %}
+                <div class="option-group" style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
+                    <div>
+                        <label>{% trans "Quantité" %}</label>
+                        <div class="qty-control">
+                            <button type="button" data-action="dec">−</button>
+                            <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                            <button type="button" data-action="inc">+</button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="flex:1;min-width:200px;">🛍️ {% trans "Ajouter au panier" %}</button>
+                </div>
+                {% else %}
+                <button type="button" class="btn btn-ghost" disabled style="margin-top:16px;">{% trans "Article épuisé" %}</button>
+                {% endif %}
+            </form>
+
+            {% if product.description %}
+            <div class="detail-desc">
+                <h3 style="font-family:var(--font-body);font-size:1rem;text-transform:uppercase;letter-spacing:1px;">{% trans "Description" %}</h3>
+                <p>{{ product.description|linebreaksbr }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Produits similaires -->
+    {% if related %}
+    <section class="section">
+        <div class="section-head"><h2>{% trans "Vous aimerez aussi" %}</h2></div>
+        <div class="product-grid">
+            {% for product in related %}{% include "store/_product_card.html" %}{% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</div>
+{% endblock %}
