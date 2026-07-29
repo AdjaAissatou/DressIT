@@ -417,6 +417,99 @@ msgstr "Back to my account"
 msgid "Bienvenue chez DressIT, votre compte a été créé !"
 msgstr "Welcome to DressIT, your account has been created!"
 
+msgid "Mes favoris"
+msgstr "My favourites"
+
+msgid "Ajouter aux favoris"
+msgstr "Add to favourites"
+
+msgid "Dans vos favoris"
+msgstr "In your favourites"
+
+msgid "Retiré de vos favoris."
+msgstr "Removed from your favourites."
+
+msgid "Ajouté à vos favoris ❤️"
+msgstr "Added to your favourites ❤️"
+
+msgid "Aucun favori pour l'instant"
+msgstr "No favourites yet"
+
+msgid "Cliquez sur le cœur d'un article pour le retrouver ici."
+msgstr "Click the heart on an item to find it here."
+
+msgid "Offerte"
+msgstr "Free"
+
+msgid "Remise"
+msgstr "Discount"
+
+msgid "Code promo"
+msgstr "Promo code"
+
+msgid "OK"
+msgstr "OK"
+
+msgid "appliqué"
+msgstr "applied"
+
+msgid "Code promo retiré."
+msgstr "Promo code removed."
+
+msgid "Code promo invalide."
+msgstr "Invalid promo code."
+
+msgid "Ce code n'est plus actif."
+msgstr "This code is no longer active."
+
+msgid "Ce code a expiré."
+msgstr "This code has expired."
+
+msgid "Ce code a atteint sa limite d'utilisation."
+msgstr "This code has reached its usage limit."
+
+msgid "Livraison offerte"
+msgstr "Free shipping"
+
+msgid "Paiement sécurisé"
+msgstr "Secure payment"
+
+msgid "Carte ou à la livraison"
+msgstr "Card or cash on delivery"
+
+msgid "Retours faciles"
+msgstr "Easy returns"
+
+msgid "Sous 30 jours"
+msgstr "Within 30 days"
+
+msgid "Les meilleurs prix"
+msgstr "The best prices"
+
+msgid "Qualité au juste prix"
+msgstr "Quality at a fair price"
+
+msgid "Offre de bienvenue"
+msgstr "Welcome offer"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "J'en profite"
+msgstr "Shop now"
+
+msgid "Récapitulatif :"
+msgstr "Summary:"
+
+msgid "Livraison à :"
+msgstr "Delivered to:"
+
+msgid "À bientôt sur DressIT !"
+msgstr "See you soon at DressIT!"
+
+msgid "À bientôt sur DressIT — la mode aux prix les plus abordables."
+msgstr "See you soon at DressIT — fashion at the most affordable prices."
+
 msgid "Français"
 msgstr "French"
 

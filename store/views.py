@@ -5,13 +5,16 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_POST
 
 from .cart import Cart
+from .emails import send_order_confirmation
 from .forms import CheckoutForm, SignUpForm
-from .models import Category, Gender, Order, OrderItem, Product
+from .models import Category, Gender, Order, OrderItem, Product, PromoCode
+from .wishlist import Wishlist
 
 
 def home(request):
@@ -20,10 +23,13 @@ def home(request):
     on_sale = [
         p for p in Product.objects.available().prefetch_related("images") if p.is_on_sale
     ][:8]
+    # Un code promo à mettre en avant sur la page d'accueil, s'il en existe un actif.
+    highlight_promo = PromoCode.objects.filter(active=True).order_by("-id").first()
     context = {
         "featured": featured,
         "new_arrivals": new_arrivals,
         "on_sale": on_sale,
+        "highlight_promo": highlight_promo,
         "categories_homme": Category.objects.filter(gender__in=[Gender.HOMME, Gender.UNISEXE]),
         "categories_femme": Category.objects.filter(gender__in=[Gender.FEMME, Gender.UNISEXE]),
     }
@@ -185,6 +191,13 @@ def checkout(request):
             order = form.save(commit=False)
             if request.user.is_authenticated:
                 order.user = request.user
+
+            # Livraison et remise, figées au moment de la commande.
+            promo = cart.promo
+            order.shipping_cost = cart.shipping
+            order.discount = cart.discount
+            order.promo_code = promo.code if promo else ""
+
             # Paiement carte : simulation d'un paiement réussi (à remplacer par
             # Stripe/PayPal en production). Paiement à la livraison : non payé.
             if order.payment_method == Order.PaymentMethod.CARD:
@@ -210,7 +223,17 @@ def checkout(request):
                 product.stock = max(0, product.stock - item["quantity"])
                 product.save(update_fields=["stock"])
 
+            # Incrémente le compteur d'utilisation du code promo.
+            if promo:
+                promo.used_count = promo.used_count + 1
+                promo.save(update_fields=["used_count"])
+
             cart.clear()
+            cart.remove_promo()
+
+            # E-mail de confirmation (console en dev, SMTP en prod).
+            send_order_confirmation(order, request)
+
             messages.success(
                 request,
                 _("Merci ! Votre commande #%(id)s a bien été enregistrée.")
@@ -221,6 +244,48 @@ def checkout(request):
         form = CheckoutForm(initial=initial)
 
     return render(request, "store/checkout.html", {"form": form})
+
+
+# --------------------------------------------------------------------------- #
+# Codes promo
+# --------------------------------------------------------------------------- #
+@require_POST
+def promo_apply(request):
+    cart = Cart(request)
+    ok, msg = cart.apply_promo(request.POST.get("code", ""))
+    (messages.success if ok else messages.error)(request, msg)
+    return redirect("cart")
+
+
+@require_POST
+def promo_remove(request):
+    Cart(request).remove_promo()
+    messages.info(request, _("Code promo retiré."))
+    return redirect("cart")
+
+
+# --------------------------------------------------------------------------- #
+# Favoris (wishlist)
+# --------------------------------------------------------------------------- #
+@require_POST
+def wishlist_toggle(request, product_id):
+    product = get_object_or_404(Product.objects.available(), id=product_id)
+    wishlist = Wishlist(request)
+    added = wishlist.toggle(product)
+    if request.headers.get("x-requested-with") == "XMLHttpRequest":
+        return JsonResponse({"added": added, "count": len(wishlist)})
+    messages.success(
+        request,
+        _("Ajouté à vos favoris ❤️") if added else _("Retiré de vos favoris."),
+    )
+    return redirect(request.META.get("HTTP_REFERER", "home"))
+
+
+def wishlist_detail(request):
+    wishlist = Wishlist(request)
+    return render(
+        request, "store/wishlist.html", {"products": wishlist.products()}
+    )
 
 
 def order_confirmation(request, order_id):

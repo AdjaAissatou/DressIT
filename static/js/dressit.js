@@ -84,6 +84,45 @@
             });
         }
 
+        /* ---- Favoris : ajout/retrait sans recharger la page ---- */
+        function getCookie(name) {
+            const m = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+            return m ? m.pop() : "";
+        }
+        document.querySelectorAll("form.wishlist-form").forEach(function (form) {
+            form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                const btn = form.querySelector("button");
+                fetch(form.action, {
+                    method: "POST",
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCookie("csrftoken"),
+                    },
+                })
+                    .then(function (r) { return r.json(); })
+                    .then(function (data) {
+                        btn.classList.toggle("active", data.added);
+                        if (btn.classList.contains("heart-inline")) {
+                            btn.innerHTML = data.added ? "♥ " + (btn.dataset.on || "Dans vos favoris")
+                                                       : "♥ " + (btn.dataset.off || "Ajouter aux favoris");
+                        }
+                        const badge = document.querySelector('a[href$="/favoris/"] .cart-badge');
+                        const iconBtn = document.querySelector('a[href$="/favoris/"]');
+                        if (data.count > 0) {
+                            if (badge) { badge.textContent = data.count; }
+                            else if (iconBtn) {
+                                const span = document.createElement("span");
+                                span.className = "cart-badge";
+                                span.textContent = data.count;
+                                iconBtn.appendChild(span);
+                            }
+                        } else if (badge) { badge.remove(); }
+                    })
+                    .catch(function () { form.submit(); });
+            });
+        });
+
         /* ---- Auto-masquage des toasts ---- */
         document.querySelectorAll(".toast").forEach(function (toast) {
             setTimeout(function () {

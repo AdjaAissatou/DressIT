@@ -743,11 +743,69 @@ textarea.input { border-radius: var(--radius); }
 .footer-grid a:hover { color: var(--accent); }
 .footer-bottom { text-align: center; margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.85rem; }
 
+/* --------------------------------------------------------------- Wishlist / cœur */
+.product-thumb .wishlist-form { position: absolute; top: 10px; right: 10px; z-index: 2; }
+.heart-btn {
+    width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer;
+    background: rgba(28, 19, 13, 0.55); color: #fff; font-size: 1.1rem; line-height: 1;
+    backdrop-filter: blur(4px); transition: all var(--transition);
+    display: flex; align-items: center; justify-content: center;
+}
+.heart-btn:hover { background: rgba(28, 19, 13, 0.8); transform: scale(1.1); }
+.heart-btn.active { background: var(--gold); color: #fff; }
+[data-theme="light"] .heart-btn { background: rgba(255, 255, 255, 0.75); color: var(--brown-600); }
+[data-theme="light"] .heart-btn.active { background: var(--gold-deep); color: #fff; }
+
+.heart-inline.active { background: var(--accent); color: var(--accent-contrast); }
+
+/* --------------------------------------------------------------- Code promo */
+.promo-form { display: flex; gap: 8px; margin-bottom: 16px; }
+.promo-form .input { padding: 9px 14px; }
+.promo-applied {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    background: var(--surface-2); border: 1px dashed var(--accent); border-radius: var(--radius);
+    padding: 10px 14px; margin-bottom: 16px; font-size: 0.9rem;
+}
+.promo-applied .remove { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; }
+.promo-applied .remove:hover { color: #c05b5b; }
+
+/* --------------------------------------------------------------- Bandeau avantages */
+.features-strip {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 20px; margin: 26px 0;
+}
+.features-strip .feature { display: flex; align-items: center; gap: 12px; }
+.features-strip .fi { font-size: 1.6rem; }
+.features-strip strong { display: block; font-size: 0.95rem; }
+.features-strip small { color: var(--text-muted); font-size: 0.82rem; }
+
+/* --------------------------------------------------------------- Bannière promo */
+.promo-banner {
+    display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+    background: linear-gradient(120deg, var(--gold-deep), var(--gold-soft));
+    border-radius: 20px; padding: 26px 34px; margin: 34px 0; color: #2a1d0c;
+    box-shadow: var(--shadow-sm);
+}
+.promo-banner .eyebrow { text-transform: uppercase; letter-spacing: 2px; font-size: 0.75rem; font-weight: 700; opacity: 0.8; }
+.promo-banner h2 { color: #2a1d0c; margin: 4px 0 0; font-size: 1.7rem; }
+.promo-banner .btn { margin-left: auto; }
+.promo-code-chip {
+    background: rgba(255, 255, 255, 0.9); border: 2px dashed #2a1d0c; border-radius: 12px;
+    padding: 8px 18px; text-align: center;
+}
+.promo-code-chip small { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #6b4f2a; }
+.promo-code-chip strong { font-size: 1.3rem; letter-spacing: 2px; color: #2a1d0c; }
+@media (max-width: 720px) {
+    .promo-banner .btn { margin-left: 0; }
+}
+
 /* --------------------------------------------------------------- Responsive */
 @media (max-width: 960px) {
     .shop-layout, .cart-layout, .product-detail, .account-grid { grid-template-columns: 1fr; }
     .filters, .summary { position: static; }
     .footer-grid { grid-template-columns: 1fr 1fr; }
+    .features-strip { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 720px) {

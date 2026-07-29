@@ -239,6 +239,14 @@ class Order(models.Model):
     )
     paid = models.BooleanField(_("Payée"), default=False)
 
+    shipping_cost = models.DecimalField(
+        _("Frais de livraison"), max_digits=10, decimal_places=2, default=0
+    )
+    discount = models.DecimalField(
+        _("Remise"), max_digits=10, decimal_places=2, default=0
+    )
+    promo_code = models.CharField(_("Code promo utilisé"), max_length=40, blank=True)
+
     created_at = models.DateTimeField(_("Passée le"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Mise à jour"), auto_now=True)
 
@@ -251,8 +259,12 @@ class Order(models.Model):
         return f"Commande #{self.pk}"
 
     @property
-    def total(self):
+    def subtotal(self):
         return sum((item.subtotal for item in self.items.all()), start=0)
+
+    @property
+    def total(self):
+        return self.subtotal - self.discount + self.shipping_cost
 
     @property
     def item_count(self):
@@ -288,3 +300,106 @@ class OrderItem(models.Model):
     @property
     def subtotal(self):
         return self.price * self.quantity
+
+
+class PromoCode(models.Model):
+    """Code promotionnel appliqué au panier (pourcentage ou montant fixe)."""
+
+    class DiscountType(models.TextChoices):
+        PERCENT = "percent", _("Pourcentage (%)")
+        FIXED = "fixed", _("Montant fixe")
+
+    code = models.CharField(_("Code"), max_length=40, unique=True)
+    discount_type = models.CharField(
+        _("Type de remise"),
+        max_length=10,
+        choices=DiscountType.choices,
+        default=DiscountType.PERCENT,
+    )
+    value = models.DecimalField(
+        _("Valeur"),
+        max_digits=10,
+        decimal_places=2,
+        help_text=_("Ex : 10 = -10 % ou -10 € selon le type."),
+    )
+    min_subtotal = models.DecimalField(
+        _("Sous-total minimum"),
+        max_digits=10,
+        decimal_places=2,
+        default=0,
+        help_text=_("Montant minimum du panier pour utiliser le code."),
+    )
+    active = models.BooleanField(_("Actif"), default=True)
+    valid_until = models.DateField(_("Valable jusqu'au"), blank=True, null=True)
+    max_uses = models.PositiveIntegerField(
+        _("Nombre d'utilisations max"),
+        blank=True,
+        null=True,
+        help_text=_("Laisser vide pour un usage illimité."),
+    )
+    used_count = models.PositiveIntegerField(_("Utilisé (fois)"), default=0)
+
+    class Meta:
+        verbose_name = _("Code promo")
+        verbose_name_plural = _("Codes promo")
+        ordering = ["-id"]
+
+    def __str__(self):
+        return self.code
+
+    def save(self, *args, **kwargs):
+        self.code = self.code.strip().upper()
+        super().save(*args, **kwargs)
+
+    def check_validity(self, subtotal):
+        """Retourne (valide: bool, message d'erreur ou "")."""
+        from django.utils import timezone
+
+        if not self.active:
+            return False, _("Ce code n'est plus actif.")
+        if self.valid_until and self.valid_until < timezone.now().date():
+            return False, _("Ce code a expiré.")
+        if self.max_uses is not None and self.used_count >= self.max_uses:
+            return False, _("Ce code a atteint sa limite d'utilisation.")
+        if subtotal < self.min_subtotal:
+            return False, _("Ce code nécessite un panier d'au moins %(min)s.") % {
+                "min": self.min_subtotal
+            }
+        return True, ""
+
+    def compute_discount(self, subtotal):
+        from decimal import Decimal
+
+        if self.discount_type == self.DiscountType.PERCENT:
+            amount = subtotal * self.value / Decimal("100")
+        else:
+            amount = self.value
+        # La remise ne peut pas dépasser le sous-total.
+        return min(amount, subtotal).quantize(Decimal("0.01"))
+
+
+class Favorite(models.Model):
+    """Article mis en favori par un utilisateur connecté."""
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="favorites",
+        verbose_name=_("Client"),
+    )
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="favorited_by",
+        verbose_name=_("Article"),
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Favori")
+        verbose_name_plural = _("Favoris")
+        unique_together = ("user", "product")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.user} ♥ {self.product}"

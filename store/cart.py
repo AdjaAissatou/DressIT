@@ -4,9 +4,10 @@ from decimal import Decimal
 
 from django.conf import settings
 
-from .models import Product
+from .models import Product, PromoCode
 
 CART_SESSION_KEY = "cart"
+PROMO_SESSION_KEY = "promo_code"
 
 
 class Cart:
@@ -86,10 +87,73 @@ class Cart:
 
     @property
     def total(self):
+        """Sous-total des articles (avant remise et livraison)."""
         return sum(
             (Decimal(item["price"]) * item["quantity"] for item in self.cart.values()),
             start=Decimal("0"),
         )
+
+    subtotal = total
+
+    # ---------------------------------------------------------------- Promo
+    @property
+    def promo(self):
+        """Retourne l'objet PromoCode appliqué et encore valide, sinon None."""
+        code = self.session.get(PROMO_SESSION_KEY)
+        if not code:
+            return None
+        try:
+            promo = PromoCode.objects.get(code=code)
+        except PromoCode.DoesNotExist:
+            self.remove_promo()
+            return None
+        valid, _msg = promo.check_validity(self.total)
+        if not valid:
+            return None
+        return promo
+
+    def apply_promo(self, code):
+        """Tente d'appliquer un code. Retourne (succès: bool, message)."""
+        code = (code or "").strip().upper()
+        try:
+            promo = PromoCode.objects.get(code=code)
+        except PromoCode.DoesNotExist:
+            return False, "Code promo invalide."
+        valid, msg = promo.check_validity(self.total)
+        if not valid:
+            return False, msg
+        self.session[PROMO_SESSION_KEY] = promo.code
+        self.session.modified = True
+        return True, f"Code « {promo.code} » appliqué."
+
+    def remove_promo(self):
+        self.session.pop(PROMO_SESSION_KEY, None)
+        self.session.modified = True
+
+    @property
+    def discount(self):
+        promo = self.promo
+        if not promo:
+            return Decimal("0")
+        return promo.compute_discount(self.total)
+
+    # ------------------------------------------------------------- Livraison
+    @property
+    def shipping(self):
+        if len(self) == 0:
+            return Decimal("0")
+        threshold = Decimal(str(settings.DRESSIT_FREE_SHIPPING_THRESHOLD))
+        if self.total - self.discount >= threshold:
+            return Decimal("0")
+        return Decimal(str(settings.DRESSIT_SHIPPING_FEE))
+
+    @property
+    def free_shipping_threshold(self):
+        return Decimal(str(settings.DRESSIT_FREE_SHIPPING_THRESHOLD))
+
+    @property
+    def grand_total(self):
+        return self.total - self.discount + self.shipping
 
     @property
     def currency(self):

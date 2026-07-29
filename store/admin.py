@@ -7,10 +7,12 @@ from django.utils.translation import gettext_lazy as _
 from .models import (
     Category,
     Color,
+    Favorite,
     Order,
     OrderItem,
     Product,
     ProductImage,
+    PromoCode,
     Size,
 )
 
@@ -153,3 +155,27 @@ class OrderAdmin(admin.ModelAdmin):
     @admin.display(description=_("Total"))
     def total_display(self, obj):
         return f"{obj.total} €"
+
+
+@admin.register(PromoCode)
+class PromoCodeAdmin(admin.ModelAdmin):
+    list_display = (
+        "code",
+        "discount_type",
+        "value",
+        "min_subtotal",
+        "active",
+        "valid_until",
+        "used_count",
+        "max_uses",
+    )
+    list_editable = ("active",)
+    list_filter = ("active", "discount_type")
+    search_fields = ("code",)
+
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ("user", "product", "created_at")
+    search_fields = ("user__username", "product__name")
+    autocomplete_fields = ("user", "product")

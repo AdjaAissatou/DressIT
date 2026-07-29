@@ -71,9 +71,23 @@
                     <span>{{ item.subtotal|floatformat:2 }} {{ currency }}</span>
                 </div>
                 {% endfor %}
+                <div class="summary-row" style="font-size:0.9rem;">
+                    <span>{% trans "Sous-total" %}</span>
+                    <span>{{ cart.subtotal|floatformat:2 }} {{ currency }}</span>
+                </div>
+                {% if cart.discount %}
+                <div class="summary-row" style="font-size:0.9rem;color:var(--accent);">
+                    <span>{% trans "Remise" %} {% if cart.promo %}({{ cart.promo.code }}){% endif %}</span>
+                    <span>−{{ cart.discount|floatformat:2 }} {{ currency }}</span>
+                </div>
+                {% endif %}
+                <div class="summary-row" style="font-size:0.9rem;">
+                    <span>{% trans "Livraison" %}</span>
+                    {% if cart.shipping %}<span>{{ cart.shipping|floatformat:2 }} {{ currency }}</span>{% else %}<span class="gold">{% trans "Offerte" %}</span>{% endif %}
+                </div>
                 <div class="summary-row total">
                     <span>{% trans "Total" %}</span>
-                    <span class="gold">{{ cart.total|floatformat:2 }} {{ currency }}</span>
+                    <span class="gold">{{ cart.grand_total|floatformat:2 }} {{ currency }}</span>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block" style="margin-top:18px;">✅ {% trans "Confirmer la commande" %}</button>
                 <a href="{% url 'cart' %}" class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">← {% trans "Retour au panier" %}</a>

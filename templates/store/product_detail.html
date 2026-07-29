@@ -96,11 +96,19 @@
                             <button type="button" data-action="inc">+</button>
                         </div>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="flex:1;min-width:200px;">🛍️ {% trans "Ajouter au panier" %}</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1;min-width:180px;">🛍️ {% trans "Ajouter au panier" %}</button>
                 </div>
                 {% else %}
                 <button type="button" class="btn btn-ghost" disabled style="margin-top:16px;">{% trans "Article épuisé" %}</button>
                 {% endif %}
+            </form>
+
+            <form method="post" action="{% url 'wishlist_toggle' product.id %}" class="wishlist-form" style="margin-top:12px;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-outline btn-block heart-inline {% if product.id in wishlist_ids %}active{% endif %}"
+                        data-on="{% trans 'Dans vos favoris' %}" data-off="{% trans 'Ajouter aux favoris' %}">
+                    ♥ {% if product.id in wishlist_ids %}{% trans "Dans vos favoris" %}{% else %}{% trans "Ajouter aux favoris" %}{% endif %}
+                </button>
             </form>
 
             {% if product.description %}

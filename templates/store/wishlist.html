@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Mes favoris" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head"><h1>♥ {% trans "Mes favoris" %}</h1></div>
+
+    {% if products %}
+    <div class="product-grid">
+        {% for product in products %}{% include "store/_product_card.html" %}{% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="icon">💛</div>
+        <h3>{% trans "Aucun favori pour l'instant" %}</h3>
+        <p>{% trans "Cliquez sur le cœur d'un article pour le retrouver ici." %}</p>
+        <a href="{% url 'shop' %}" class="btn btn-primary" style="margin-top:14px;">{% trans "Découvrir la boutique" %}</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

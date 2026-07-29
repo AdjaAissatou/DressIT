@@ -45,17 +45,49 @@
 
         <aside class="summary">
             <h3>{% trans "Récapitulatif" %}</h3>
+
+            <!-- Code promo -->
+            {% if cart.promo %}
+            <div class="promo-applied">
+                <span>🎟️ <strong>{{ cart.promo.code }}</strong> {% trans "appliqué" %}</span>
+                <form method="post" action="{% url 'promo_remove' %}">{% csrf_token %}
+                    <button type="submit" class="remove">✕</button>
+                </form>
+            </div>
+            {% else %}
+            <form method="post" action="{% url 'promo_apply' %}" class="promo-form">
+                {% csrf_token %}
+                <input type="text" name="code" class="input" placeholder="{% trans 'Code promo' %}">
+                <button type="submit" class="btn btn-ghost btn-sm">{% trans "OK" %}</button>
+            </form>
+            {% endif %}
+
             <div class="summary-row">
                 <span>{% trans "Sous-total" %}</span>
-                <span>{{ cart.total|floatformat:2 }} {{ currency }}</span>
+                <span>{{ cart.subtotal|floatformat:2 }} {{ currency }}</span>
             </div>
+            {% if cart.discount %}
+            <div class="summary-row" style="color:var(--accent);">
+                <span>{% trans "Remise" %}</span>
+                <span>−{{ cart.discount|floatformat:2 }} {{ currency }}</span>
+            </div>
+            {% endif %}
             <div class="summary-row">
                 <span>{% trans "Livraison" %}</span>
-                <span class="gold">{% trans "Calculée à la commande" %}</span>
+                {% if cart.shipping %}
+                    <span>{{ cart.shipping|floatformat:2 }} {{ currency }}</span>
+                {% else %}
+                    <span class="gold">{% trans "Offerte" %} 🎉</span>
+                {% endif %}
             </div>
+            {% if cart.shipping %}
+            <p class="muted" style="font-size:0.8rem;margin:6px 0 0;">
+                {% blocktrans with amount=cart.free_shipping_threshold|floatformat:2 %}Livraison offerte dès {{ amount }} {{ currency }} d'achat.{% endblocktrans %}
+            </p>
+            {% endif %}
             <div class="summary-row total">
                 <span>{% trans "Total" %}</span>
-                <span class="gold">{{ cart.total|floatformat:2 }} {{ currency }}</span>
+                <span class="gold">{{ cart.grand_total|floatformat:2 }} {{ currency }}</span>
             </div>
             <a href="{% url 'checkout' %}" class="btn btn-primary btn-block" style="margin-top:18px;">{% trans "Passer commande" %} →</a>
         </aside>

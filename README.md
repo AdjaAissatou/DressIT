@@ -9,12 +9,16 @@ et texte clair.
 - 🛍️ **Catalogue Homme / Femme / Unisexe** avec catégories, tailles, couleurs et photos
 - 🔎 **Recherche, filtres et tri** (prix, nouveautés, nom)
 - 🛒 **Panier** (fonctionne sans compte, basé sur la session)
+- ❤️ **Liste de favoris (wishlist)** avec bouton cœur instantané
+- 🚚 **Frais de livraison** (offerts au-delà d'un montant) et 🎟️ **codes promo**
 - 💳 **Commande & paiement** : carte bancaire (mode démonstration) ou paiement à la livraison
+- 📧 **E-mail de confirmation** de commande (HTML, aux couleurs de la marque)
 - 👤 **Espace client** : inscription, connexion, historique des commandes, changement de mot de passe
 - 🎨 **Thème marron/beige/doré**, texte clair, **mode sombre & clair** (mémorisé dans le navigateur)
 - 🌍 **Multilingue** : français 🇫🇷 et anglais 🇬🇧, bascule instantanée
 - 🖼️ **Gestion des photos** et des articles ultra simple via l'**administration Django**
 - 📦 **Gestion des commandes** côté admin (statuts : en attente, payée, expédiée, livrée, annulée)
+- ✨ **Images de démonstration générées automatiquement** (en attendant vos vraies photos)
 
 ## 🚀 Démarrage rapide
 
@@ -82,6 +86,26 @@ des **variables d'environnement**.
 | `DRESSIT_DEBUG` | `1` = debug activé, `0` = production | `1` |
 | `DRESSIT_ALLOWED_HOSTS` | Hôtes autorisés (séparés par `,`) | `*` |
 | `DRESSIT_CURRENCY_SYMBOL` | Symbole de devise | `€` |
+| `DRESSIT_SHIPPING_FEE` | Frais de livraison | `4.90` |
+| `DRESSIT_FREE_SHIPPING_THRESHOLD` | Livraison offerte au-delà de | `50` |
+| `DRESSIT_EMAIL_BACKEND` | Backend e-mail (console en dev) | console |
+| `DRESSIT_EMAIL_HOST` / `_PORT` / `_HOST_USER` / `_HOST_PASSWORD` | SMTP (prod) | — |
+| `DRESSIT_FROM_EMAIL` | Expéditeur des e-mails | `DressIT <no-reply@dressit.local>` |
+
+## 🎟️ Codes promo & 🚚 livraison
+
+- Créez vos **codes promo** dans l'admin (`/admin` → *Codes promo*) : pourcentage
+  ou montant fixe, panier minimum, date d'expiration, nombre d'utilisations.
+  `seed_demo` en crée trois : `BIENVENUE10` (-10 %), `ETE20` (-20 % dès 40 €),
+  `MOINS5` (-5 € dès 25 €).
+- La **livraison** est un forfait, **offerte** au-delà du seuil (voir variables
+  ci-dessus). Le client voit le total se recalculer en direct dans le panier.
+
+## 📧 E-mails
+
+En développement, les e-mails de confirmation s'affichent dans le terminal
+(backend console). Pour les envoyer réellement, renseignez les variables SMTP
+`DRESSIT_EMAIL_*` (ex. Gmail, SendGrid, Mailgun…).
 
 ## 🗂️ Structure
 

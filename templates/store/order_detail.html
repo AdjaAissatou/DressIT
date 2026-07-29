@@ -40,6 +40,20 @@
                 </tbody>
                 <tfoot>
                     <tr>
+                        <td colspan="2" class="muted">{% trans "Sous-total" %}</td>
+                        <td style="text-align:right;" class="muted">{{ order.subtotal|floatformat:2 }} {{ currency }}</td>
+                    </tr>
+                    {% if order.discount %}
+                    <tr>
+                        <td colspan="2" class="gold">{% trans "Remise" %}{% if order.promo_code %} ({{ order.promo_code }}){% endif %}</td>
+                        <td style="text-align:right;" class="gold">−{{ order.discount|floatformat:2 }} {{ currency }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td colspan="2" class="muted">{% trans "Livraison" %}</td>
+                        <td style="text-align:right;" class="muted">{% if order.shipping_cost %}{{ order.shipping_cost|floatformat:2 }} {{ currency }}{% else %}{% trans "Offerte" %}{% endif %}</td>
+                    </tr>
+                    <tr>
                         <th colspan="2">{% trans "Total" %}</th>
                         <th style="text-align:right;" class="gold">{{ order.total|floatformat:2 }} {{ currency }}</th>
                     </tr>

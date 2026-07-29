@@ -131,6 +131,22 @@ LOGOUT_REDIRECT_URL = "home"
 # Devise de la boutique (symbole affiché à côté des prix)
 DRESSIT_CURRENCY_SYMBOL = os.environ.get("DRESSIT_CURRENCY_SYMBOL", "€")
 
+# Livraison : frais fixes, offerte au-delà d'un certain montant.
+DRESSIT_SHIPPING_FEE = os.environ.get("DRESSIT_SHIPPING_FEE", "4.90")
+DRESSIT_FREE_SHIPPING_THRESHOLD = os.environ.get("DRESSIT_FREE_SHIPPING_THRESHOLD", "50")
+
+# E-mail : en développement, les messages s'affichent dans la console.
+# En production, définissez EMAIL_BACKEND SMTP via les variables d'environnement.
+EMAIL_BACKEND = os.environ.get(
+    "DRESSIT_EMAIL_BACKEND", "django.core.mail.backends.console.EmailBackend"
+)
+EMAIL_HOST = os.environ.get("DRESSIT_EMAIL_HOST", "")
+EMAIL_PORT = int(os.environ.get("DRESSIT_EMAIL_PORT", "587"))
+EMAIL_HOST_USER = os.environ.get("DRESSIT_EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.environ.get("DRESSIT_EMAIL_HOST_PASSWORD", "")
+EMAIL_USE_TLS = os.environ.get("DRESSIT_EMAIL_USE_TLS", "1") == "1"
+DEFAULT_FROM_EMAIL = os.environ.get("DRESSIT_FROM_EMAIL", "DressIT <no-reply@dressit.local>")
+
 # Messages : classes CSS compatibles avec notre thème
 from django.contrib.messages import constants as message_constants  # noqa: E402
 

@@ -28,6 +28,11 @@ urlpatterns = [
     path("panier/ajouter/<int:product_id>/", views.cart_add, name="cart_add"),
     path("panier/modifier/<str:key>/", views.cart_update, name="cart_update"),
     path("panier/retirer/<str:key>/", views.cart_remove, name="cart_remove"),
+    path("panier/code-promo/", views.promo_apply, name="promo_apply"),
+    path("panier/code-promo/retirer/", views.promo_remove, name="promo_remove"),
+    # Favoris
+    path("favoris/", views.wishlist_detail, name="wishlist"),
+    path("favoris/toggle/<int:product_id>/", views.wishlist_toggle, name="wishlist_toggle"),
     # Commande
     path("commander/", views.checkout, name="checkout"),
     path(
