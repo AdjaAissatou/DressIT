@@ -6,9 +6,11 @@ from django.utils.translation import gettext_lazy as _
 
 from .templatetags.store_extras import money
 
+from .emails import send_complaint_response
 from .models import (
     Category,
     Color,
+    Complaint,
     Favorite,
     Order,
     OrderItem,
@@ -181,3 +183,27 @@ class FavoriteAdmin(admin.ModelAdmin):
     list_display = ("user", "product", "created_at")
     search_fields = ("user__username", "product__name")
     autocomplete_fields = ("user", "product")
+
+
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "subject", "status", "order", "created_at")
+    list_filter = ("status", "subject", "created_at")
+    list_editable = ("status",)
+    search_fields = ("name", "email", "message", "id")
+    readonly_fields = ("name", "email", "phone", "subject", "order", "message", "created_at")
+    date_hierarchy = "created_at"
+    fieldsets = (
+        (_("Réclamation"), {"fields": ("name", "email", "phone", "subject", "order", "message", "created_at")}),
+        (_("Traitement"), {"fields": ("status", "response")}),
+    )
+
+    def save_model(self, request, obj, form, change):
+        # Envoie la réponse au client si elle vient d'être saisie/modifiée.
+        send_response = False
+        if change and "response" in form.changed_data and obj.response.strip():
+            send_response = True
+        super().save_model(request, obj, form, change)
+        if send_response:
+            send_complaint_response(obj, request)
+            self.message_user(request, _("Réponse envoyée au client par e-mail."))

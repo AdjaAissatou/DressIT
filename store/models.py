@@ -402,6 +402,65 @@ class PromoCode(models.Model):
         return min(amount, subtotal).quantize(Decimal("0.01"))
 
 
+class Complaint(models.Model):
+    """Réclamation d'un client (SAV)."""
+
+    class Status(models.TextChoices):
+        OPEN = "open", _("Ouverte")
+        IN_PROGRESS = "in_progress", _("En cours")
+        RESOLVED = "resolved", _("Résolue")
+        CLOSED = "closed", _("Fermée")
+
+    class Subject(models.TextChoices):
+        ORDER = "order", _("Problème de commande")
+        DELIVERY = "delivery", _("Livraison")
+        PRODUCT = "product", _("Article défectueux")
+        PAYMENT = "payment", _("Paiement")
+        REFUND = "refund", _("Remboursement / échange")
+        OTHER = "other", _("Autre")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="complaints",
+        verbose_name=_("Client"),
+    )
+    order = models.ForeignKey(
+        "Order",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="complaints",
+        verbose_name=_("Commande concernée"),
+    )
+    name = models.CharField(_("Nom"), max_length=150)
+    email = models.EmailField(_("E-mail"))
+    phone = models.CharField(_("Téléphone"), max_length=40, blank=True)
+    subject = models.CharField(
+        _("Motif"), max_length=20, choices=Subject.choices, default=Subject.ORDER
+    )
+    message = models.TextField(_("Votre message"))
+
+    status = models.CharField(
+        _("Statut"), max_length=12, choices=Status.choices, default=Status.OPEN
+    )
+    response = models.TextField(_("Réponse du service client"), blank=True)
+
+    created_at = models.DateTimeField(_("Reçue le"), auto_now_add=True)
+    updated_at = models.DateTimeField(_("Mise à jour"), auto_now=True)
+    responded_at = models.DateTimeField(_("Répondue le"), null=True, blank=True)
+
+    class Meta:
+        verbose_name = _("Réclamation")
+        verbose_name_plural = _("Réclamations")
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"Réclamation #{self.pk} — {self.get_subject_display()}"
+
+
 class Favorite(models.Model):
     """Article mis en favori par un utilisateur connecté."""
 

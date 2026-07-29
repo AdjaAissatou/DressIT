@@ -1,0 +1,6 @@
+{% load i18n %}{% blocktrans with name=complaint.name %}Bonjour {{ name }}, voici la réponse de notre service client :{% endblocktrans %}
+
+{{ complaint.response }}
+
+{% trans "Statut" %} : {{ complaint.get_status_display }}
+{% trans "À bientôt sur DressIT !" %}

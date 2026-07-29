@@ -69,10 +69,19 @@
 
         <!-- Génération de visuel -->
         <div class="panel">
-            <h3 class="dash-title">🎨 {% trans "Créer un visuel (à partir d'un modèle)" %}</h3>
+            <h3 class="dash-title">🎨 {% trans "Créer un visuel" %}
+                {% if image_ai_available %}<span class="ai-badge" style="font-size:0.7rem;">🤖 {% trans "IA réelle" %}</span>{% endif %}
+            </h3>
             <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="image">
+                {% if image_ai_available %}
+                <div class="form-field">
+                    <label>🧠 {% trans "Description de l'image (prompt IA)" %}</label>
+                    <input type="text" name="image_prompt" class="input" placeholder="{% trans 'Ex : robe longue satinée beige sur mannequin, fond studio' %}">
+                    <span class="helptext muted">{% trans "Génère une vraie image via votre fournisseur d'IA configuré." %}</span>
+                </div>
+                {% endif %}
                 <div class="form-field">
                     <label>📷 {% trans "Photo du modèle (optionnel)" %}</label>
                     <input type="file" name="model_photo" accept="image/*" class="input">

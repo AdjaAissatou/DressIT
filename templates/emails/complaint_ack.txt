@@ -1,0 +1,4 @@
+{% load i18n %}{% blocktrans with name=complaint.name id=complaint.id %}Bonjour {{ name }}, votre réclamation #{{ id }} a bien été reçue. Nous revenons vers vous rapidement.{% endblocktrans %}
+
+{% trans "Motif" %} : {{ complaint.get_subject_display }}
+{{ complaint.message }}

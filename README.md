@@ -24,6 +24,8 @@ et texte clair.
 - 💸 **Paiement mobile réel** : **Wave** et **Orange Money** (API officielles, aucune simulation)
 - ✨ **Studio IA (super-admin)** : descriptions (Claude) + visuels de marque, **à partir de la photo du modèle**
 - 📈 **Aide à la décision** : meilleurs clients, articles les plus vendus, CA par catégorie, panier moyen, moyens de paiement
+- 🛎️ **Réclamations (SAV)** : le client dépose une réclamation, l'admin répond (e-mail automatique)
+- 📧 **E-mails enrichis** : confirmation de commande, **paiement reçu**, **suivi de statut**, accusés de réclamation
 - 🖼️ **Vraies photos de démonstration** (robes, chemises…), plusieurs par article
 
 ## 🚀 Démarrage rapide
@@ -85,10 +87,33 @@ Un espace de gestion réservé au personnel est disponible sur **`/gestion/`**
   - **Visuels de marque** générés à partir d'un modèle (silhouette + dégradé),
     à télécharger ou à attacher directement aux photos d'un article.
 
-Pour activer Claude : `export ANTHROPIC_API_KEY=sk-ant-...` (et éventuellement
-`DRESSIT_AI_MODEL`, par défaut `claude-opus-5`). Pour des **photos IA
-photoréalistes**, branchez un service de génération d'images ; la structure est
-prête dans `store/ai.py`.
+Le Studio IA fait partie de **l'espace de gestion** (accessible à tout le
+personnel `staff`, pas seulement au super-administrateur Django).
+
+**Descriptions par IA réelle** — activez Claude :
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...      # + DRESSIT_AI_MODEL (défaut claude-opus-5)
+```
+
+**Images IA réelles** (photoréalistes) — branchez un fournisseur d'images
+compatible (réponse `b64_json` ou `url`, style API OpenAI Images) :
+```bash
+export DRESSIT_IMAGE_API_URL=https://api.openai.com/v1/images/generations
+export DRESSIT_IMAGE_API_KEY=sk-...
+export DRESSIT_IMAGE_MODEL=gpt-image-1     # optionnel
+```
+Sans fournisseur d'images, le Studio habille la **photo du modèle** que vous
+fournissez aux couleurs DressIT, ou génère une silhouette de marque.
+
+### 🛎️ Réclamations (SAV) & e-mails
+
+- Le client dépose une réclamation via `/reclamation/` (lien « Une réclamation ? »
+  en pied de page et dans l'espace client). Il reçoit un accusé, et vous êtes
+  notifié·e (définissez `DRESSIT_ADMIN_EMAIL`).
+- Vous répondez depuis l'admin (`/admin` → *Réclamations*) : saisir la réponse et
+  enregistrer **envoie automatiquement l'e-mail au client**.
+- **E-mails automatiques** : confirmation de commande, paiement reçu, et **suivi
+  de statut** (expédiée / livrée / annulée) — tous aux couleurs de DressIT.
 
 > Ajouter de **nouveaux articles** ou de **nouvelles catégories** se fait dans
 > l'admin (`/admin`) — voir la section « Remplir vos articles » ci-dessus.

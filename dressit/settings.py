@@ -150,6 +150,8 @@ EMAIL_HOST_USER = os.environ.get("DRESSIT_EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("DRESSIT_EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.environ.get("DRESSIT_EMAIL_USE_TLS", "1") == "1"
 DEFAULT_FROM_EMAIL = os.environ.get("DRESSIT_FROM_EMAIL", "DressIT <no-reply@dressit.local>")
+# Adresse qui reçoit les notifications de réclamations (SAV).
+DRESSIT_ADMIN_EMAIL = os.environ.get("DRESSIT_ADMIN_EMAIL", "")
 
 # Messages : classes CSS compatibles avec notre thème
 from django.contrib.messages import constants as message_constants  # noqa: E402

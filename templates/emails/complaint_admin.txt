@@ -1,0 +1,5 @@
+{% load i18n %}{% trans "Nouvelle réclamation" %} #{{ complaint.id }}
+{{ complaint.name }} - {{ complaint.email }} {{ complaint.phone }}
+{% trans "Motif" %} : {{ complaint.get_subject_display }}{% if complaint.order %} - {% trans "Commande" %} #{{ complaint.order.id }}{% endif %}
+
+{{ complaint.message }}

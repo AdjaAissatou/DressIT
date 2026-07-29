@@ -22,7 +22,7 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from . import ai
-from .models import Category, Order, OrderItem, Product, ProductImage
+from .models import Category, Complaint, Order, OrderItem, Product, ProductImage
 from .placeholder_images import GARMENTS, compose_with_photo, generate_image
 
 LOW_STOCK_THRESHOLD = 5
@@ -148,13 +148,21 @@ def dashboard(request):
         "avg_order_value": avg_order_value,
         "revenue_by_category": revenue_by_category,
         "payment_split": payment_split,
+        "open_complaints_count": Complaint.objects.filter(
+            status__in=[Complaint.Status.OPEN, Complaint.Status.IN_PROGRESS]
+        ).count(),
+        "recent_complaints": Complaint.objects.all()[:5],
     }
     return render(request, "store/dashboard.html", context)
 
 
-@superadmin_required
+@staff_member_required
 def ai_studio(request):
-    """Studio IA (super-admin) : descriptions (Claude) et visuels de marque."""
+    """Studio IA (espace de gestion) : descriptions (Claude) et visuels de marque.
+
+    Réservé au personnel (staff) — il fait partie de votre espace d'administration,
+    pas de la boutique publique.
+    """
     result = {}
     if request.method == "POST":
         action = request.POST.get("action")
@@ -195,11 +203,23 @@ def ai_studio(request):
             except (TypeError, ValueError):
                 palette = 0
 
-            # Photo du modèle fournie par l'admin → visuel de marque à partir d'elle.
             model_photo = request.FILES.get("model_photo")
-            if model_photo:
+            prompt = request.POST.get("image_prompt", "").strip()
+
+            data = None
+            # 1) Vraie génération IA si un fournisseur d'images est configuré.
+            if ai.image_ai_available():
+                full_prompt = prompt or (
+                    f"Photo de mode e-commerce d'un article « {title} » "
+                    f"({garment}) {subtitle}, fond neutre élégant, éclairage studio, "
+                    f"tons chauds beige et doré, haute qualité."
+                )
+                data = ai.generate_image_ai(full_prompt)
+            # 2) Sinon : photo du modèle habillée aux couleurs DressIT.
+            if data is None and model_photo:
                 data = compose_with_photo(model_photo, title, subtitle, palette)
-            else:
+            # 3) Sinon : silhouette de marque générée.
+            if data is None:
                 data = generate_image(title, subtitle, garment, palette)
 
             # Sauvegarde un aperçu servable.
@@ -224,6 +244,7 @@ def ai_studio(request):
         "result": result,
         "ai_available": ai.ai_available(),
         "ai_model": ai.DEFAULT_MODEL,
+        "image_ai_available": ai.image_ai_available(),
         "products": Product.objects.order_by("name"),
         "categories": Category.objects.all(),
         "garments": sorted(GARMENTS.keys()),

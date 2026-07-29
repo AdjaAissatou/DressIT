@@ -1,0 +1,11 @@
+{% extends "emails/_base.html" %}
+{% load i18n %}
+{% block body %}
+<h1 style="font-family:Georgia,serif;font-size:22px;margin:0 0 6px;">🛎️ {% trans "Nouvelle réclamation" %} #{{ complaint.id }}</h1>
+<div style="padding:16px;background:#f6efe1;border-radius:10px;font-size:14px;">
+    <strong>{{ complaint.name }}</strong> · {{ complaint.email }}{% if complaint.phone %} · {{ complaint.phone }}{% endif %}<br>
+    <strong>{% trans "Motif" %} :</strong> {{ complaint.get_subject_display }}{% if complaint.order %} · {% trans "Commande" %} #{{ complaint.order.id }}{% endif %}<br><br>
+    <span style="color:#5a4636;white-space:pre-line;">{{ complaint.message }}</span>
+</div>
+<p style="margin-top:16px;font-size:13px;color:#8f7a63;">{% trans "Répondez depuis l'administration DressIT." %}</p>
+{% endblock %}

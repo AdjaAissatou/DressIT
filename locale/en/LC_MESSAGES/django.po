@@ -54,7 +54,7 @@ msgid "Aide"
 msgstr "Help"
 
 msgid "Livraison"
-msgstr "Shipping"
+msgstr "Delivery"
 
 msgid "Retours"
 msgstr "Returns"
@@ -742,6 +742,117 @@ msgid ""
 msgstr ""
 "Provide a photo: it will be styled in DressIT colours. Otherwise a "
 "silhouette is generated."
+
+msgid "Réclamation"
+msgstr "Complaint"
+
+msgid "Réclamations"
+msgstr "Complaints"
+
+msgid "Faire une réclamation"
+msgstr "File a complaint"
+
+msgid "Un souci avec une commande, une livraison, un article ? Écrivez-nous."
+msgstr "A problem with an order, a delivery, an item? Write to us."
+
+msgid "Motif"
+msgstr "Reason"
+
+msgid "Votre message"
+msgstr "Your message"
+
+msgid "Commande concernée (optionnel)"
+msgstr "Related order (optional)"
+
+msgid "Téléphone (optionnel)"
+msgstr "Phone (optional)"
+
+msgid "Envoyer ma réclamation"
+msgstr "Send my complaint"
+
+msgid "Mes réclamations"
+msgstr "My complaints"
+
+msgid "Nouvelle réclamation"
+msgstr "New complaint"
+
+msgid "Aucune réclamation. Un souci ?"
+msgstr "No complaints. A problem?"
+
+msgid "Contactez-nous"
+msgstr "Contact us"
+
+msgid "Réponse"
+msgstr "Reply"
+
+msgid "Une réclamation ?"
+msgstr "A complaint?"
+
+msgid "Réclamations récentes"
+msgstr "Recent complaints"
+
+msgid "Aucune réclamation."
+msgstr "No complaints."
+
+msgid "à traiter"
+msgstr "to handle"
+
+msgid "Problème de commande"
+msgstr "Order issue"
+
+msgid "Article défectueux"
+msgstr "Faulty item"
+
+msgid "Remboursement / échange"
+msgstr "Refund / exchange"
+
+msgid "Autre"
+msgstr "Other"
+
+msgid "Ouverte"
+msgstr "Open"
+
+msgid "En cours"
+msgstr "In progress"
+
+msgid "Résolue"
+msgstr "Resolved"
+
+msgid "Fermée"
+msgstr "Closed"
+
+msgid "Paiement reçu"
+msgstr "Payment received"
+
+msgid "Votre paiement a bien été reçu"
+msgstr "Your payment has been received"
+
+msgid "Réponse à votre réclamation"
+msgstr "Reply to your complaint"
+
+msgid "Nous avons bien reçu votre message"
+msgstr "We have received your message"
+
+msgid "Votre commande est expédiée"
+msgstr "Your order has shipped"
+
+msgid "Votre commande est livrée"
+msgstr "Your order has been delivered"
+
+msgid "La mode à petit prix"
+msgstr "Affordable fashion"
+
+msgid "Créer un visuel"
+msgstr "Create a visual"
+
+msgid "IA réelle"
+msgstr "Real AI"
+
+msgid "Description de l'image (prompt IA)"
+msgstr "Image description (AI prompt)"
+
+msgid "Génère une vraie image via votre fournisseur d'IA configuré."
+msgstr "Generates a real image via your configured AI provider."
 
 msgid "Français"
 msgstr "French"

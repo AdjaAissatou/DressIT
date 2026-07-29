@@ -13,7 +13,7 @@
         <div class="dash-actions">
             <a href="{% url 'admin:store_product_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvel article" %}</a>
             <a href="{% url 'admin:store_category_add' %}" class="btn btn-ghost btn-sm">＋ {% trans "Catégorie" %}</a>
-            {% if user.is_superuser %}<a href="{% url 'ai_studio' %}" class="btn btn-ghost btn-sm">✨ {% trans "Studio IA" %}</a>{% endif %}
+            <a href="{% url 'ai_studio' %}" class="btn btn-ghost btn-sm">✨ {% trans "Studio IA" %}</a>
             <a href="{% url 'admin:index' %}" class="btn btn-ghost btn-sm">⚙ {% trans "Administration" %}</a>
         </div>
     </div>
@@ -44,6 +44,11 @@
             <span class="stat-label">{% trans "Ruptures de stock" %}</span>
             <span class="stat-value">{{ out_of_stock_count }}</span>
             <span class="stat-sub">{{ low_stock_count }} {% trans "en stock faible" %}</span>
+        </div>
+        <div class="stat-tile {% if open_complaints_count %}alert{% endif %}">
+            <span class="stat-label">{% trans "Réclamations" %}</span>
+            <span class="stat-value">{{ open_complaints_count }}</span>
+            <span class="stat-sub">{% trans "à traiter" %}</span>
         </div>
     </div>
 
@@ -128,6 +133,19 @@
                 {% if not out_of_stock and not low_stock %}
                 <p class="muted">✅ {% trans "Tous les stocks sont bons." %}</p>
                 {% endif %}
+            </div>
+
+            <!-- Réclamations récentes -->
+            <div class="panel" style="margin-top:20px;">
+                <h3 class="dash-title">🛎️ {% trans "Réclamations récentes" %}</h3>
+                {% for c in recent_complaints %}
+                <div class="status-row">
+                    <a href="{% url 'admin:store_complaint_change' c.id %}">#{{ c.id }} · {{ c.get_subject_display }}</a>
+                    <span class="status-pill status-{% if c.status == 'resolved' or c.status == 'closed' %}delivered{% elif c.status == 'in_progress' %}shipped{% else %}pending{% endif %}">{{ c.get_status_display }}</span>
+                </div>
+                {% empty %}
+                <p class="muted">✅ {% trans "Aucune réclamation." %}</p>
+                {% endfor %}
             </div>
         </div>
     </div>

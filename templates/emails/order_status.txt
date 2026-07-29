@@ -1,0 +1,9 @@
+{% load i18n %}{% blocktrans with id=order.id s=order.get_status_display %}Votre commande #{{ id }} est désormais : {{ s }}.{% endblocktrans %}
+
+{% trans "Livraison à :" %}
+{{ order.full_name }}
+{{ order.address }}
+{{ order.postal_code }} {{ order.city }}
+{{ order.country }}
+
+{% trans "À bientôt sur DressIT !" %}

@@ -1,0 +1,8 @@
+{% load i18n store_extras %}{% trans "Paiement confirmé" %}
+
+{% blocktrans with id=order.id m=order.get_payment_method_display %}Nous avons reçu votre paiement {{ m }} pour la commande #{{ id }}.{% endblocktrans %}
+
+{% trans "Total" %} : {{ order.total|money }}
+{% trans "Statut" %} : {{ order.get_status_display }}
+
+{% trans "À bientôt sur DressIT !" %}

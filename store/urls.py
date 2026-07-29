@@ -51,6 +51,8 @@ urlpatterns = [
     path("compte/", views.account, name="account"),
     path("compte/commande/<int:order_id>/", views.order_detail, name="order_detail"),
     path("inscription/", views.signup, name="signup"),
+    # Réclamations (SAV)
+    path("reclamation/", views.complaint_create, name="complaint"),
     # Gestion (staff)
     path("gestion/", staff.dashboard, name="dashboard"),
     path("gestion/studio-ia/", staff.ai_studio, name="ai_studio"),

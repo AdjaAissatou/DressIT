@@ -1,0 +1,21 @@
+{% extends "emails/_base.html" %}
+{% load i18n store_extras %}
+{% block body %}
+<h1 style="font-family:Georgia,serif;font-size:23px;margin:0 0 6px;">
+{% if order.status == 'shipped' %}🚚 {% trans "Votre commande est expédiée" %}
+{% elif order.status == 'delivered' %}📦 {% trans "Votre commande est livrée" %}
+{% elif order.status == 'cancelled' %}❌ {% trans "Votre commande a été annulée" %}
+{% else %}ℹ️ {% trans "Mise à jour de votre commande" %}{% endif %}</h1>
+<p style="color:#8f7a63;margin:0 0 20px;">{% blocktrans with id=order.id s=order.get_status_display %}Le statut de votre commande <strong>#{{ id }}</strong> est désormais : <strong>{{ s }}</strong>.{% endblocktrans %}</p>
+
+<!-- Suivi visuel -->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 20px;">
+<tr>
+{% for step in "1234" %}{% endfor %}
+<td align="center" style="color:{% if order.status == 'paid' or order.status == 'shipped' or order.status == 'delivered' %}#a67c2e{% else %}#c9b79a{% endif %};font-size:12px;">● {% trans "Payée" %}</td>
+<td align="center" style="color:{% if order.status == 'shipped' or order.status == 'delivered' %}#a67c2e{% else %}#c9b79a{% endif %};font-size:12px;">● {% trans "Expédiée" %}</td>
+<td align="center" style="color:{% if order.status == 'delivered' %}#a67c2e{% else %}#c9b79a{% endif %};font-size:12px;">● {% trans "Livrée" %}</td>
+</tr>
+</table>
+{% include "emails/_order_table.html" %}
+{% endblock %}

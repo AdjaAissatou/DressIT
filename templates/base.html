@@ -144,9 +144,9 @@
             <div>
                 <h4>{% trans "Aide" %}</h4>
                 <ul>
-                    <li><a href="#">{% trans "Livraison" %}</a></li>
-                    <li><a href="#">{% trans "Retours" %}</a></li>
-                    <li><a href="#">{% trans "Contact" %}</a></li>
+                    <li><a href="{% url 'complaint' %}">{% trans "Une réclamation ?" %}</a></li>
+                    <li><a href="{% url 'photo_search' %}">{% trans "Recherche par photo" %}</a></li>
+                    <li><a href="{% url 'complaint' %}">{% trans "Contact" %}</a></li>
                 </ul>
             </div>
         </div>

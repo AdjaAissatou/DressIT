@@ -12,6 +12,7 @@
     <div class="account-grid">
         <aside class="account-nav">
             <a href="{% url 'account' %}" style="border-color:var(--accent);color:var(--accent);">🧾 {% trans "Mes commandes" %}</a>
+            <a href="#reclamations">🛎️ {% trans "Mes réclamations" %}</a>
             <a href="{% url 'password_change' %}">🔒 {% trans "Mot de passe" %}</a>
             <a href="{% url 'cart' %}">🛍️ {% trans "Mon panier" %}</a>
             <form action="{% url 'logout' %}" method="post" style="margin-top:6px;">
@@ -49,6 +50,35 @@
                     <a href="{% url 'shop' %}" class="btn btn-primary" style="margin-top:14px;">{% trans "Faire du shopping" %}</a>
                 </div>
             {% endif %}
+
+            <!-- Réclamations -->
+            <div id="reclamations" style="margin-top:36px;">
+                <div class="section-head">
+                    <h2 style="font-size:1.4rem;margin:0;">🛎️ {% trans "Mes réclamations" %}</h2>
+                    <a href="{% url 'complaint' %}" class="btn btn-ghost btn-sm">＋ {% trans "Nouvelle réclamation" %}</a>
+                </div>
+                {% if complaints %}
+                    {% for c in complaints %}
+                    <div class="order-card">
+                        <div class="order-head">
+                            <div>
+                                <strong>#{{ c.id }} · {{ c.get_subject_display }}</strong>
+                                <span class="muted"> · {{ c.created_at|date:"d/m/Y" }}</span>
+                            </div>
+                            <span class="status-pill status-{% if c.status == 'resolved' or c.status == 'closed' %}delivered{% elif c.status == 'in_progress' %}shipped{% else %}pending{% endif %}">{{ c.get_status_display }}</span>
+                        </div>
+                        <p class="muted" style="margin:10px 0 0;">{{ c.message|truncatechars:140 }}</p>
+                        {% if c.response %}
+                        <div style="margin-top:10px;padding:12px;background:var(--surface-2);border-left:3px solid var(--accent);border-radius:8px;">
+                            <strong class="gold">💬 {% trans "Réponse" %} :</strong> {{ c.response }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="muted">{% trans "Aucune réclamation. Un souci ?" %} <a href="{% url 'complaint' %}" class="gold">{% trans "Contactez-nous" %}</a>.</p>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>

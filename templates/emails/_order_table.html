@@ -1,0 +1,22 @@
+{% load i18n store_extras %}
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:8px;">
+    {% for item in order.items.all %}
+    <tr>
+        <td style="padding:9px 0;border-bottom:1px solid #eee3d0;">
+            {{ item.quantity }} × {{ item.product_name }}
+            {% if item.size or item.color %}<br><span style="color:#8f7a63;font-size:12px;">{% if item.size %}{% trans "Taille" %}: {{ item.size }}{% endif %}{% if item.color %} · {% trans "Couleur" %}: {{ item.color }}{% endif %}</span>{% endif %}
+        </td>
+        <td align="right" style="padding:9px 0;border-bottom:1px solid #eee3d0;white-space:nowrap;">{{ item.subtotal|money }}</td>
+    </tr>
+    {% endfor %}
+    <tr><td style="padding:8px 0;color:#8f7a63;">{% trans "Sous-total" %}</td><td align="right" style="padding:8px 0;color:#8f7a63;">{{ order.subtotal|money }}</td></tr>
+    {% if order.discount %}<tr><td style="padding:2px 0;color:#a67c2e;">{% trans "Remise" %}{% if order.promo_code %} ({{ order.promo_code }}){% endif %}</td><td align="right" style="padding:2px 0;color:#a67c2e;">−{{ order.discount|money }}</td></tr>{% endif %}
+    <tr><td style="padding:2px 0;color:#8f7a63;">{% trans "Livraison" %}</td><td align="right" style="padding:2px 0;color:#8f7a63;">{% if order.shipping_cost %}{{ order.shipping_cost|money }}{% else %}{% trans "Offerte" %}{% endif %}</td></tr>
+    <tr><td style="padding:12px 0 0;font-size:17px;font-weight:bold;">{% trans "Total" %}</td><td align="right" style="padding:12px 0 0;font-size:17px;font-weight:bold;color:#a67c2e;">{{ order.total|money }}</td></tr>
+</table>
+
+<div style="margin-top:22px;padding:16px;background:#f6efe1;border-radius:10px;font-size:14px;">
+    <strong>{% trans "Adresse de livraison" %}</strong><br>
+    <span style="color:#5a4636;">{{ order.full_name }}<br>{{ order.address }}<br>{{ order.postal_code }} {{ order.city }}<br>{{ order.country }}<br>📞 {{ order.phone }}</span>
+</div>
+<p style="margin-top:14px;color:#8f7a63;font-size:13px;">{% trans "Mode de paiement" %} : {{ order.get_payment_method_display }} · {% trans "Statut" %} : {{ order.get_status_display }}</p>

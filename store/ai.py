@@ -100,3 +100,54 @@ def _generate_fallback(name, category, gender, keywords):
         middle = f"{middle} Points forts : {keywords}."
     outro = random.choice(_OUTROS)
     return f"{intro} {middle} {outro}"
+
+
+# --------------------------------------------------------------------------- #
+# Génération d'IMAGES par IA (fournisseur configurable, réel)
+# --------------------------------------------------------------------------- #
+# Compatible avec les API d'images de type OpenAI (réponse b64_json ou url).
+# Configurez :
+#   DRESSIT_IMAGE_API_URL   ex : https://api.openai.com/v1/images/generations
+#   DRESSIT_IMAGE_API_KEY   clé Bearer du fournisseur
+#   DRESSIT_IMAGE_MODEL     ex : gpt-image-1 (optionnel)
+def image_ai_available():
+    return bool(os.environ.get("DRESSIT_IMAGE_API_URL") and os.environ.get("DRESSIT_IMAGE_API_KEY"))
+
+
+def generate_image_ai(prompt, size="1024x1024"):
+    """Génère une vraie image IA via le fournisseur configuré. Retourne les octets
+    JPEG/PNG, ou None si indisponible / en cas d'échec (repli géré par l'appelant).
+    """
+    if not image_ai_available():
+        return None
+    import json as _json
+    import urllib.request
+
+    url = os.environ["DRESSIT_IMAGE_API_URL"]
+    payload = {
+        "model": os.environ.get("DRESSIT_IMAGE_MODEL", "gpt-image-1"),
+        "prompt": prompt,
+        "n": 1,
+        "size": size,
+    }
+    headers = {
+        "Authorization": f"Bearer {os.environ['DRESSIT_IMAGE_API_KEY']}",
+        "Content-Type": "application/json",
+    }
+    try:
+        req = urllib.request.Request(
+            url, data=_json.dumps(payload).encode(), headers=headers, method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            data = _json.loads(resp.read().decode())
+        item = (data.get("data") or [{}])[0]
+        if item.get("b64_json"):
+            import base64
+
+            return base64.b64decode(item["b64_json"])
+        if item.get("url"):
+            with urllib.request.urlopen(item["url"], timeout=60) as img:
+                return img.read()
+    except Exception:  # pragma: no cover - dépend du fournisseur / réseau
+        return None
+    return None

@@ -1,0 +1,22 @@
+{% load i18n %}<!DOCTYPE html>
+<html>
+<body style="margin:0;background:#f1e9db;font-family:Arial,Helvetica,sans-serif;color:#33261c;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f1e9db;padding:24px 0;">
+<tr><td align="center">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);">
+    <tr><td style="background:linear-gradient(135deg,#3d2d22,#4f3b2c 60%,#241a13);padding:26px 32px;">
+        <span style="font-family:Georgia,serif;font-size:26px;font-weight:bold;color:#fff;letter-spacing:1px;">Dress<span style="color:#e0bd6a;">IT</span></span>
+        <span style="float:right;color:#f0d79c;font-size:12px;letter-spacing:2px;text-transform:uppercase;">{% block tagline %}{% trans "La mode à petit prix" %}{% endblock %}</span>
+    </td></tr>
+    <tr><td style="padding:30px 32px;">
+        {% block body %}{% endblock %}
+    </td></tr>
+    <tr><td style="background:#f6efe1;padding:18px 32px;text-align:center;color:#8f7a63;font-size:12px;line-height:1.6;">
+        DressIT — {% trans "la mode Homme & Femme aux prix les plus abordables." %}<br>
+        {% block footer_extra %}{% endblock %}
+    </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

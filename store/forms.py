@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
-from .models import Order
+from .models import Complaint, Order
 
 
 class StyledFormMixin:
@@ -75,3 +75,27 @@ class CheckoutForm(StyledFormMixin, forms.ModelForm):
         widgets = {
             "note": forms.Textarea(attrs={"rows": 3}),
         }
+
+
+class ComplaintForm(StyledFormMixin, forms.ModelForm):
+    """Réclamation client (SAV)."""
+
+    class Meta:
+        model = Complaint
+        fields = ["name", "email", "phone", "subject", "order", "message"]
+        widgets = {
+            "message": forms.Textarea(attrs={"rows": 5}),
+        }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["order"].required = False
+        self.fields["phone"].required = False
+        # Un client connecté ne voit que ses propres commandes.
+        if user is not None and user.is_authenticated:
+            self.fields["order"].queryset = user.orders.all()
+        else:
+            from .models import Order
+
+            self.fields["order"].queryset = Order.objects.none()
+            self.fields["order"].widget = forms.HiddenInput()

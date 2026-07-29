@@ -15,8 +15,8 @@ from django.views.decorators.http import require_POST
 
 from . import imagesearch, payments
 from .cart import Cart
-from .emails import send_order_confirmation
-from .forms import CheckoutForm, SignUpForm
+from .emails import send_complaint_received, send_order_confirmation, send_payment_confirmation
+from .forms import CheckoutForm, ComplaintForm, SignUpForm
 from .models import Category, Gender, Order, OrderItem, Product, PromoCode
 from .wishlist import Wishlist
 
@@ -291,7 +291,7 @@ def _mark_paid(order, request=None):
     order.status = Order.Status.PAID
     order.save(update_fields=["paid", "status"])
     _commit_stock(order)
-    send_order_confirmation(order, request)
+    send_payment_confirmation(order, request)
 
 
 # --------------------------------------------------------------------------- #
@@ -456,10 +456,46 @@ def signup(request):
 @login_required
 def account(request):
     orders = request.user.orders.prefetch_related("items").all()
-    return render(request, "store/account.html", {"orders": orders})
+    complaints = request.user.complaints.all()
+    return render(
+        request, "store/account.html", {"orders": orders, "complaints": complaints}
+    )
 
 
 @login_required
 def order_detail(request, order_id):
     order = get_object_or_404(Order, id=order_id, user=request.user)
     return render(request, "store/order_detail.html", {"order": order})
+
+
+# --------------------------------------------------------------------------- #
+# Réclamations (SAV)
+# --------------------------------------------------------------------------- #
+def complaint_create(request):
+    initial = {}
+    order_id = request.GET.get("order")
+    if request.user.is_authenticated:
+        initial = {
+            "name": request.user.get_full_name() or request.user.username,
+            "email": request.user.email,
+        }
+        if order_id:
+            initial["order"] = order_id
+
+    if request.method == "POST":
+        form = ComplaintForm(request.POST, user=request.user)
+        if form.is_valid():
+            complaint = form.save(commit=False)
+            if request.user.is_authenticated:
+                complaint.user = request.user
+            complaint.save()
+            send_complaint_received(complaint, request)
+            messages.success(
+                request,
+                _("Votre réclamation #%(id)s a bien été envoyée. Nous vous répondrons vite.")
+                % {"id": complaint.id},
+            )
+            return redirect("account" if request.user.is_authenticated else "home")
+    else:
+        form = ComplaintForm(initial=initial, user=request.user)
+    return render(request, "store/complaint.html", {"form": form})

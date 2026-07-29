@@ -1,0 +1,8 @@
+{% extends "emails/_base.html" %}
+{% load i18n %}
+{% block body %}
+<h1 style="font-family:Georgia,serif;font-size:23px;margin:0 0 6px;">💬 {% trans "Réponse à votre réclamation" %} #{{ complaint.id }}</h1>
+<p style="color:#8f7a63;margin:0 0 16px;">{% blocktrans with name=complaint.name %}Bonjour {{ name }}, voici la réponse de notre service client :{% endblocktrans %}</p>
+<div style="padding:18px;background:#f6efe1;border-left:4px solid #a67c2e;border-radius:8px;font-size:15px;color:#33261c;white-space:pre-line;">{{ complaint.response }}</div>
+<p style="margin-top:18px;font-size:13px;color:#8f7a63;">{% trans "Statut" %} : {{ complaint.get_status_display }} · {% trans "Votre message initial" %} : « {{ complaint.message|truncatechars:120 }} »</p>
+{% endblock %}
