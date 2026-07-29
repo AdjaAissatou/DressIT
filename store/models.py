@@ -186,6 +186,8 @@ class ProductImage(models.Model):
     image = models.ImageField(_("Photo"), upload_to="products/")
     alt = models.CharField(_("Texte alternatif"), max_length=200, blank=True)
     order = models.PositiveIntegerField(_("Ordre"), default=0)
+    # Empreinte visuelle pour la recherche par photo (calculée automatiquement).
+    signature = models.TextField(_("Empreinte visuelle"), blank=True, default="")
 
     class Meta:
         verbose_name = _("Photo")
@@ -194,6 +196,20 @@ class ProductImage(models.Model):
 
     def __str__(self):
         return f"Photo — {self.product.name}"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        if self.image and not self.signature:
+            from .imagesearch import compute_signature
+
+            try:
+                sig = compute_signature(self.image.path)
+            except (NotImplementedError, ValueError, OSError):
+                sig = ""
+            if sig:
+                # update_fields évite la récursion infinie via save().
+                type(self).objects.filter(pk=self.pk).update(signature=sig)
+                self.signature = sig
 
 
 class Order(models.Model):
@@ -207,8 +223,10 @@ class Order(models.Model):
         CANCELLED = "cancelled", _("Annulée")
 
     class PaymentMethod(models.TextChoices):
-        CARD = "card", _("Carte bancaire")
+        WAVE = "wave", _("Wave")
+        ORANGE_MONEY = "orange_money", _("Orange Money")
         COD = "cod", _("Paiement à la livraison")
+        CARD = "card", _("Carte bancaire")  # conservé pour l'historique
 
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -230,9 +248,9 @@ class Order(models.Model):
 
     payment_method = models.CharField(
         _("Mode de paiement"),
-        max_length=10,
+        max_length=20,
         choices=PaymentMethod.choices,
-        default=PaymentMethod.CARD,
+        default=PaymentMethod.WAVE,
     )
     status = models.CharField(
         _("Statut"), max_length=12, choices=Status.choices, default=Status.PENDING
@@ -246,6 +264,12 @@ class Order(models.Model):
         _("Remise"), max_digits=10, decimal_places=2, default=0
     )
     promo_code = models.CharField(_("Code promo utilisé"), max_length=40, blank=True)
+
+    # Suivi du paiement en ligne (Wave / Orange Money).
+    gateway_session_id = models.CharField(_("Réf. session paiement"), max_length=120, blank=True)
+    gateway_token = models.CharField(_("Jeton de paiement"), max_length=255, blank=True)
+    gateway_notif_token = models.CharField(_("Jeton de notification"), max_length=255, blank=True)
+    stock_committed = models.BooleanField(_("Stock décrémenté"), default=False)
 
     created_at = models.DateTimeField(_("Passée le"), auto_now_add=True)
     updated_at = models.DateTimeField(_("Mise à jour"), auto_now=True)

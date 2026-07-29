@@ -1,15 +1,19 @@
 """Vues de la boutique DressIT."""
 
+import json
+
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext as _
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from . import imagesearch, payments
 from .cart import Cart
 from .emails import send_order_confirmation
 from .forms import CheckoutForm, SignUpForm
@@ -188,24 +192,25 @@ def checkout(request):
     if request.method == "POST":
         form = CheckoutForm(request.POST)
         if form.is_valid():
+            method = form.cleaned_data["payment_method"]
+
+            # Vérifie que la passerelle choisie est bien configurée (pas de faux paiement).
+            if method == Order.PaymentMethod.WAVE and not payments.wave_enabled():
+                messages.error(request, _("Le paiement Wave n'est pas encore configuré."))
+                return render(request, "store/checkout.html", _checkout_ctx(form))
+            if method == Order.PaymentMethod.ORANGE_MONEY and not payments.om_enabled():
+                messages.error(request, _("Le paiement Orange Money n'est pas encore configuré."))
+                return render(request, "store/checkout.html", _checkout_ctx(form))
+
             order = form.save(commit=False)
             if request.user.is_authenticated:
                 order.user = request.user
-
-            # Livraison et remise, figées au moment de la commande.
             promo = cart.promo
             order.shipping_cost = cart.shipping
             order.discount = cart.discount
             order.promo_code = promo.code if promo else ""
-
-            # Paiement carte : simulation d'un paiement réussi (à remplacer par
-            # Stripe/PayPal en production). Paiement à la livraison : non payé.
-            if order.payment_method == Order.PaymentMethod.CARD:
-                order.paid = True
-                order.status = Order.Status.PAID
-            else:
-                order.paid = False
-                order.status = Order.Status.PENDING
+            order.paid = False
+            order.status = Order.Status.PENDING
             order.save()
 
             for item in cart:
@@ -218,32 +223,163 @@ def checkout(request):
                     size=item["size"],
                     color=item["color"],
                 )
-                # Décrémente le stock
-                product = item["product"]
-                product.stock = max(0, product.stock - item["quantity"])
-                product.save(update_fields=["stock"])
-
-            # Incrémente le compteur d'utilisation du code promo.
             if promo:
                 promo.used_count = promo.used_count + 1
                 promo.save(update_fields=["used_count"])
 
+            # Paiement à la livraison : commande ferme, stock réservé tout de suite.
+            if method == Order.PaymentMethod.COD:
+                _commit_stock(order)
+                cart.clear()
+                cart.remove_promo()
+                send_order_confirmation(order, request)
+                messages.success(
+                    request,
+                    _("Merci ! Votre commande #%(id)s a bien été enregistrée.")
+                    % {"id": order.id},
+                )
+                return redirect("order_confirmation", order_id=order.id)
+
+            # Paiement en ligne : redirection vers la passerelle (Wave / Orange Money).
+            try:
+                if method == Order.PaymentMethod.WAVE:
+                    url = payments.wave_create_session(order, request)
+                else:
+                    url = payments.om_create_payment(order, request)
+            except payments.PaymentError as exc:
+                order.delete()  # rien n'a été réservé ni encaissé
+                messages.error(
+                    request,
+                    _("Le paiement n'a pas pu être initié : %(e)s") % {"e": exc},
+                )
+                return render(request, "store/checkout.html", _checkout_ctx(form))
+
             cart.clear()
             cart.remove_promo()
-
-            # E-mail de confirmation (console en dev, SMTP en prod).
-            send_order_confirmation(order, request)
-
-            messages.success(
-                request,
-                _("Merci ! Votre commande #%(id)s a bien été enregistrée.")
-                % {"id": order.id},
-            )
-            return redirect("order_confirmation", order_id=order.id)
+            return redirect(url)
     else:
         form = CheckoutForm(initial=initial)
 
-    return render(request, "store/checkout.html", {"form": form})
+    return render(request, "store/checkout.html", _checkout_ctx(form))
+
+
+def _checkout_ctx(form):
+    return {
+        "form": form,
+        "wave_enabled": payments.wave_enabled(),
+        "om_enabled": payments.om_enabled(),
+    }
+
+
+def _commit_stock(order):
+    """Décrémente le stock une seule fois pour une commande."""
+    if order.stock_committed:
+        return
+    for item in order.items.select_related("product"):
+        if item.product:
+            item.product.stock = max(0, item.product.stock - item.quantity)
+            item.product.save(update_fields=["stock"])
+    order.stock_committed = True
+    order.save(update_fields=["stock_committed"])
+
+
+def _mark_paid(order, request=None):
+    """Marque une commande payée (idempotent) : stock + e-mail."""
+    if order.paid:
+        return
+    order.paid = True
+    order.status = Order.Status.PAID
+    order.save(update_fields=["paid", "status"])
+    _commit_stock(order)
+    send_order_confirmation(order, request)
+
+
+# --------------------------------------------------------------------------- #
+# Retours et webhooks des passerelles de paiement
+# --------------------------------------------------------------------------- #
+def payment_return(request, order_id):
+    """Retour du client depuis Wave / Orange Money : on vérifie l'état RÉEL."""
+    order = get_object_or_404(Order, id=order_id)
+    gw = request.GET.get("gw")
+    try:
+        if gw == "wave":
+            ok = payments.wave_payment_status(order) == "succeeded"
+        elif gw == "om":
+            ok = payments.om_payment_status(order) in ("SUCCESS", "SUCCESSFULL")
+        else:
+            ok = False
+    except payments.PaymentError:
+        ok = False
+
+    if ok:
+        _mark_paid(order, request)
+        messages.success(request, _("Paiement confirmé, merci !"))
+    else:
+        messages.info(
+            request,
+            _("Votre paiement est en cours de vérification. Vous recevrez une confirmation."),
+        )
+    return redirect("order_confirmation", order_id=order.id)
+
+
+def payment_cancel(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    messages.warning(request, _("Paiement annulé. Votre commande n'a pas été validée."))
+    return render(request, "store/payment_cancel.html", {"order": order})
+
+
+@csrf_exempt
+@require_POST
+def wave_webhook(request):
+    raw = request.body.decode("utf-8", errors="replace")
+    if not payments.wave_verify_webhook(raw, request.headers.get("Wave-Signature", "")):
+        return HttpResponse(status=400)
+    try:
+        event = json.loads(raw)
+    except ValueError:
+        return HttpResponse(status=400)
+    data = event.get("data", event)
+    if data.get("payment_status") == "succeeded":
+        ref = data.get("client_reference") or ""
+        order = Order.objects.filter(id=ref).first() or Order.objects.filter(
+            gateway_session_id=data.get("id", "")
+        ).first()
+        if order:
+            _mark_paid(order)
+    return HttpResponse(status=200)
+
+
+@csrf_exempt
+@require_POST
+def om_webhook(request):
+    try:
+        data = json.loads(request.body.decode("utf-8", errors="replace"))
+    except ValueError:
+        return HttpResponse(status=400)
+    order = Order.objects.filter(id=data.get("order_id", "")).first()
+    if not order:
+        return HttpResponse(status=404)
+    # Vérifie le jeton de notification pour authentifier l'appel.
+    notif = data.get("notif_token") or data.get("notiftoken")
+    if order.gateway_notif_token and notif and notif != order.gateway_notif_token:
+        return HttpResponse(status=400)
+    if str(data.get("status", "")).upper() in ("SUCCESS", "SUCCESSFULL"):
+        _mark_paid(order)
+    return HttpResponse(status=200)
+
+
+# --------------------------------------------------------------------------- #
+# Recherche par photo
+# --------------------------------------------------------------------------- #
+def photo_search(request):
+    results = None
+    if request.method == "POST" and request.FILES.get("photo"):
+        matches = imagesearch.search(request.FILES["photo"])
+        results = [p for p, dist in matches if dist <= imagesearch.MATCH_THRESHOLD]
+        if not results and matches:
+            # Rien sous le seuil : propose tout de même les plus proches.
+            results = [p for p, _d in matches[:8]]
+    return render(request, "store/photo_search.html", {"results": results})
 
 
 # --------------------------------------------------------------------------- #

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Paiement annulé" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="panel text-center" style="max-width:520px;margin:50px auto;">
+        <div style="font-size:3rem;">↩️</div>
+        <h1>{% trans "Paiement annulé" %}</h1>
+        <p class="muted">{% blocktrans with id=order.id %}Votre commande #{{ id }} n'a pas été réglée. Vous pouvez réessayer quand vous le souhaitez.{% endblocktrans %}</p>
+        <div style="margin-top:20px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="{% url 'checkout' %}" class="btn btn-primary">{% trans "Réessayer le paiement" %}</a>
+            <a href="{% url 'shop' %}" class="btn btn-ghost">{% trans "Continuer mes achats" %}</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

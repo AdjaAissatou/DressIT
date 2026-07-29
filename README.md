@@ -20,7 +20,10 @@ et texte clair.
 - 📦 **Gestion des commandes** côté admin (statuts : en attente, payée, expédiée, livrée, annulée)
 - 📊 **Tableau de bord** de gestion : chiffre d'affaires, ventes, meilleures ventes, alertes de stock
 - 📥 **Gestion du stock et de la disponibilité** (stock faible / ruptures, activer/désactiver un article)
-- ✨ **Studio IA** : génération de descriptions d'articles (Claude) et de visuels de marque
+- 🔎 **Recherche par photo** (client) : moteur de similarité visuelle réel (couleurs + empreinte perceptuelle)
+- 💸 **Paiement mobile réel** : **Wave** et **Orange Money** (API officielles, aucune simulation)
+- ✨ **Studio IA (super-admin)** : descriptions (Claude) + visuels de marque, **à partir de la photo du modèle**
+- 📈 **Aide à la décision** : meilleurs clients, articles les plus vendus, CA par catégorie, panier moyen, moyens de paiement
 - 🖼️ **Vraies photos de démonstration** (robes, chemises…), plusieurs par article
 
 ## 🚀 Démarrage rapide
@@ -90,7 +93,51 @@ prête dans `store/ai.py`.
 > Ajouter de **nouveaux articles** ou de **nouvelles catégories** se fait dans
 > l'admin (`/admin`) — voir la section « Remplir vos articles » ci-dessus.
 
-## 💳 Passer au paiement réel
+## 🔎 Recherche par photo
+
+Le client clique sur l'icône 📷 (ou va sur `/recherche-photo/`), envoie la photo
+d'un vêtement, et la plateforme classe les articles par ressemblance visuelle
+(hash perceptuel + couleurs dominantes, 100 % local, sans service externe).
+
+Les empreintes sont calculées automatiquement à l'ajout d'une photo. Pour
+(re)calculer celles d'anciennes photos :
+
+```bash
+python manage.py build_signatures        # celles qui manquent
+python manage.py build_signatures --all  # tout recalculer
+```
+
+## 💸 Paiement mobile : Wave & Orange Money (réel)
+
+Les paiements ne sont **jamais simulés** : la commande n'est marquée « payée »
+qu'après confirmation **réelle** de l'opérateur (retour vérifié côté serveur
+et/ou webhook signé). Renseignez vos identifiants marchands en variables
+d'environnement :
+
+| Variable | Rôle |
+|---|---|
+| `DRESSIT_SITE_URL` | URL publique HTTPS du site (retours & webhooks) — **obligatoire en prod** |
+| `WAVE_API_KEY` | Clé API Wave (`wave_sn_...`) |
+| `WAVE_WEBHOOK_SECRET` | Secret de signature des webhooks Wave |
+| `OM_MERCHANT_KEY` | Clé marchand Orange Money |
+| `OM_CONSUMER_KEY` / `OM_CONSUMER_SECRET` | Identifiants OAuth Orange (ou `OM_AUTH_HEADER`) |
+| `OM_ENV` | `dev` (test) ou `prod` |
+| `OM_CURRENCY` | Devise Orange (`OUV` en test, `XOF` en prod) |
+
+- **Wave** : `POST https://api.wave.com/v1/checkout/sessions` → redirection vers
+  `wave_launch_url`. Webhook signé (HMAC-SHA256) sur `/paiement/wave/webhook/`.
+- **Orange Money** : OAuth puis `webpayment` → redirection vers `payment_url`.
+  Notification sur `/paiement/orange/webhook/`.
+
+Sans identifiants, l'option est visible mais refuse de valider (message clair,
+aucune commande fantôme). Le **paiement à la livraison** fonctionne sans clé.
+
+> Docs : [Wave Checkout](https://docs.wave.com/checkout) ·
+> [Orange Money Web Payment](https://developer.orange.com/apis/om-webpay).
+> Les paramètres exacts (devise, endpoints dev/prod) dépendent de votre contrat
+> marchand — vérifiez-les auprès de l'opérateur.
+
+## 💳 Passer au paiement carte (optionnel)
 
 Le paiement par carte est en **mode démonstration** (la commande est marquée
 « payée » sans transaction réelle). Pour encaisser vraiment, intégrez **Stripe**

@@ -33,6 +33,8 @@ urlpatterns = [
     # Favoris
     path("favoris/", views.wishlist_detail, name="wishlist"),
     path("favoris/toggle/<int:product_id>/", views.wishlist_toggle, name="wishlist_toggle"),
+    # Recherche par photo
+    path("recherche-photo/", views.photo_search, name="photo_search"),
     # Commande
     path("commander/", views.checkout, name="checkout"),
     path(
@@ -40,6 +42,11 @@ urlpatterns = [
         views.order_confirmation,
         name="order_confirmation",
     ),
+    # Paiement (retours & webhooks Wave / Orange Money)
+    path("paiement/<int:order_id>/retour/", views.payment_return, name="payment_return"),
+    path("paiement/<int:order_id>/annule/", views.payment_cancel, name="payment_cancel"),
+    path("paiement/wave/webhook/", views.wave_webhook, name="wave_webhook"),
+    path("paiement/orange/webhook/", views.om_webhook, name="om_webhook"),
     # Espace client
     path("compte/", views.account, name="account"),
     path("compte/commande/<int:order_id>/", views.order_detail, name="order_detail"),

@@ -70,9 +70,14 @@
         <!-- Génération de visuel -->
         <div class="panel">
             <h3 class="dash-title">🎨 {% trans "Créer un visuel (à partir d'un modèle)" %}</h3>
-            <form method="post" action="">
+            <form method="post" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 <input type="hidden" name="action" value="image">
+                <div class="form-field">
+                    <label>📷 {% trans "Photo du modèle (optionnel)" %}</label>
+                    <input type="file" name="model_photo" accept="image/*" class="input">
+                    <span class="helptext muted">{% trans "Fournissez une photo : elle sera habillée aux couleurs DressIT. Sinon, une silhouette est générée." %}</span>
+                </div>
                 <div class="form-field">
                     <label>{% trans "Titre affiché" %}</label>
                     <input type="text" name="image_title" class="input" placeholder="{% trans 'Ex : Nouvelle collection' %}" value="DressIT">

@@ -13,7 +13,7 @@
         <div class="dash-actions">
             <a href="{% url 'admin:store_product_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvel article" %}</a>
             <a href="{% url 'admin:store_category_add' %}" class="btn btn-ghost btn-sm">＋ {% trans "Catégorie" %}</a>
-            <a href="{% url 'ai_studio' %}" class="btn btn-ghost btn-sm">✨ {% trans "Studio IA" %}</a>
+            {% if user.is_superuser %}<a href="{% url 'ai_studio' %}" class="btn btn-ghost btn-sm">✨ {% trans "Studio IA" %}</a>{% endif %}
             <a href="{% url 'admin:index' %}" class="btn btn-ghost btn-sm">⚙ {% trans "Administration" %}</a>
         </div>
     </div>
@@ -128,6 +128,59 @@
                 {% if not out_of_stock and not low_stock %}
                 <p class="muted">✅ {% trans "Tous les stocks sont bons." %}</p>
                 {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Aide à la décision -->
+    <div class="section-head" style="margin-top:34px;">
+        <h2>{% trans "Aide à la décision" %}</h2>
+        <span class="subtitle">{% trans "Panier moyen" %} : <strong class="gold">{{ avg_order_value|money }}</strong></span>
+    </div>
+    <div class="dash-cols">
+        <div>
+            <!-- Meilleurs clients -->
+            <div class="panel">
+                <h3 class="dash-title">🏆 {% trans "Meilleurs clients" %}</h3>
+                {% if top_customers %}
+                <table class="table">
+                    <thead><tr><th>{% trans "Client" %}</th><th>{% trans "Commandes" %}</th><th style="text-align:right;">{% trans "Total dépensé" %}</th></tr></thead>
+                    <tbody>
+                    {% for cli in top_customers %}
+                    <tr>
+                        <td>{{ cli.name }}<br><small class="muted">{{ cli.email }}</small></td>
+                        <td>{{ cli.orders }}</td>
+                        <td style="text-align:right;" class="gold">{{ cli.total|money }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}<p class="muted">{% trans "Pas encore de clients." %}</p>{% endif %}
+            </div>
+        </div>
+        <div>
+            <!-- CA par catégorie -->
+            <div class="panel">
+                <h3 class="dash-title">📈 {% trans "Chiffre d'affaires par catégorie" %}</h3>
+                {% for c in revenue_by_category %}
+                <div style="margin-bottom:10px;">
+                    <div style="display:flex;justify-content:space-between;font-size:0.88rem;">
+                        <span>{{ c.product__category__name }}</span>
+                        <strong>{{ c.rev|money }}</strong>
+                    </div>
+                    <div style="height:8px;background:var(--surface-2);border-radius:6px;overflow:hidden;margin-top:3px;">
+                        <div style="height:100%;width:{{ c.pct }}%;background:linear-gradient(90deg,var(--gold-soft),var(--gold-deep));"></div>
+                    </div>
+                </div>
+                {% empty %}<p class="muted">{% trans "Pas encore de ventes." %}</p>{% endfor %}
+            </div>
+
+            <!-- Répartition des paiements -->
+            <div class="panel" style="margin-top:20px;">
+                <h3 class="dash-title">💳 {% trans "Moyens de paiement" %}</h3>
+                {% for pm in payment_split %}
+                <div class="status-row"><span>{{ pm.label }}</span><strong>{{ pm.n }}</strong></div>
+                {% empty %}<p class="muted">—</p>{% endfor %}
             </div>
         </div>
     </div>

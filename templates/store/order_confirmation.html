@@ -10,10 +10,12 @@
         <h1>{% trans "Merci pour votre commande !" %}</h1>
         <p class="muted">{% blocktrans with id=order.id %}Votre commande <strong>#{{ id }}</strong> a bien été enregistrée.{% endblocktrans %}</p>
 
-        {% if order.payment_method == 'card' %}
-            <p class="gold">✅ {% trans "Paiement confirmé (démonstration)." %}</p>
-        {% else %}
+        {% if order.paid %}
+            <p class="gold">✅ {% trans "Paiement confirmé" %} ({{ order.get_payment_method_display }}).</p>
+        {% elif order.payment_method == 'cod' %}
             <p class="gold">📦 {% trans "Vous paierez à la livraison." %}</p>
+        {% else %}
+            <p class="soft">⏳ {% blocktrans with m=order.get_payment_method_display %}Paiement {{ m }} en attente de confirmation.{% endblocktrans %}</p>
         {% endif %}
 
         <div style="text-align:left;margin-top:24px;border-top:1px solid var(--border);padding-top:20px;">

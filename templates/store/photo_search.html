@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load i18n store_extras %}
+
+{% block title %}{% trans "Recherche par photo" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="page-head">
+        <h1>📷 {% trans "Rechercher par photo" %}</h1>
+        <p class="muted">{% trans "Envoyez la photo d'un vêtement, nous trouvons les articles les plus ressemblants." %}</p>
+    </div>
+
+    <form method="post" action="" enctype="multipart/form-data" id="photo-form" style="max-width:520px;margin:0 auto;">
+        {% csrf_token %}
+        <label class="photo-drop" for="photo-input">
+            <div class="icon">🖼️</div>
+            <strong>{% trans "Choisir une photo" %}</strong>
+            <p class="muted" style="margin:6px 0 0;font-size:0.85rem;">{% trans "JPG ou PNG — un vêtement bien visible fonctionne le mieux." %}</p>
+            <input type="file" name="photo" id="photo-input" accept="image/*" required>
+            <img id="photo-preview" class="photo-preview" alt="">
+        </label>
+        <button class="btn btn-primary btn-block" style="margin-top:16px;">🔎 {% trans "Trouver des articles similaires" %}</button>
+    </form>
+
+    {% if results is not None %}
+    <section class="section">
+        <div class="section-head"><h2>{% trans "Résultats" %}</h2></div>
+        {% if results %}
+        <div class="product-grid">
+            {% for product in results %}{% include "store/_product_card.html" %}{% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <div class="icon">🤔</div>
+            <h3>{% trans "Aucun article ressemblant trouvé" %}</h3>
+            <p>{% trans "Essayez une autre photo, plus nette ou plus centrée sur le vêtement." %}</p>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+</div>
+
+<script>
+    (function () {
+        var input = document.getElementById("photo-input");
+        var preview = document.getElementById("photo-preview");
+        if (input) input.addEventListener("change", function () {
+            if (input.files && input.files[0]) {
+                preview.src = URL.createObjectURL(input.files[0]);
+                preview.style.display = "block";
+            }
+        });
+    })();
+</script>
+{% endblock %}

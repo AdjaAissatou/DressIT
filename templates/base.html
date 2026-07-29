@@ -64,6 +64,8 @@
 
             <button id="theme-toggle" class="icon-btn" title="{% trans 'Changer de thème' %}" aria-label="{% trans 'Changer de thème' %}">☀️</button>
 
+            <a href="{% url 'photo_search' %}" class="icon-btn" title="{% trans 'Recherche par photo' %}">📷</a>
+
             <a href="{% url 'wishlist' %}" class="icon-btn" title="{% trans 'Mes favoris' %}">
                 ♥
                 {% if wishlist_count %}<span class="cart-badge">{{ wishlist_count }}</span>{% endif %}

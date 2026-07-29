@@ -135,6 +135,10 @@ DRESSIT_CURRENCY_SYMBOL = os.environ.get("DRESSIT_CURRENCY_SYMBOL", "FCFA")
 DRESSIT_SHIPPING_FEE = os.environ.get("DRESSIT_SHIPPING_FEE", "2000")
 DRESSIT_FREE_SHIPPING_THRESHOLD = os.environ.get("DRESSIT_FREE_SHIPPING_THRESHOLD", "30000")
 
+# URL publique du site (https://…) pour les retours et webhooks de paiement.
+# Indispensable en production pour Wave / Orange Money.
+DRESSIT_SITE_URL = os.environ.get("DRESSIT_SITE_URL", "")
+
 # E-mail : en développement, les messages s'affichent dans la console.
 # En production, définissez EMAIL_BACKEND SMTP via les variables d'environnement.
 EMAIL_BACKEND = os.environ.get(

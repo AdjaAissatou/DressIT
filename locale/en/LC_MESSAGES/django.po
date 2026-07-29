@@ -648,6 +648,101 @@ msgstr "Template"
 msgid "Indiquez au moins le nom de l'article."
 msgstr "Please provide at least the item name."
 
+msgid "Recherche par photo"
+msgstr "Photo search"
+
+msgid "Rechercher par photo"
+msgstr "Search by photo"
+
+msgid ""
+"Envoyez la photo d'un vêtement, nous trouvons les articles les plus "
+"ressemblants."
+msgstr ""
+"Upload a photo of a garment and we'll find the closest matching items."
+
+msgid "Choisir une photo"
+msgstr "Choose a photo"
+
+msgid "JPG ou PNG — un vêtement bien visible fonctionne le mieux."
+msgstr "JPG or PNG — a clearly visible garment works best."
+
+msgid "Trouver des articles similaires"
+msgstr "Find similar items"
+
+msgid "Résultats"
+msgstr "Results"
+
+msgid "Aucun article ressemblant trouvé"
+msgstr "No similar item found"
+
+msgid "Essayez une autre photo, plus nette ou plus centrée sur le vêtement."
+msgstr "Try another photo, sharper or more focused on the garment."
+
+msgid "Wave"
+msgstr "Wave"
+
+msgid "Orange Money"
+msgstr "Orange Money"
+
+msgid "à configurer"
+msgstr "to configure"
+
+msgid "Le paiement Wave n'est pas encore configuré."
+msgstr "Wave payment is not configured yet."
+
+msgid "Le paiement Orange Money n'est pas encore configuré."
+msgstr "Orange Money payment is not configured yet."
+
+msgid "Paiement confirmé, merci !"
+msgstr "Payment confirmed, thank you!"
+
+msgid ""
+"Votre paiement est en cours de vérification. Vous recevrez une confirmation."
+msgstr "Your payment is being verified. You will receive a confirmation."
+
+msgid "Paiement annulé. Votre commande n'a pas été validée."
+msgstr "Payment cancelled. Your order was not confirmed."
+
+msgid "Paiement annulé"
+msgstr "Payment cancelled"
+
+msgid "Réessayer le paiement"
+msgstr "Retry payment"
+
+msgid "Paiement confirmé"
+msgstr "Payment confirmed"
+
+msgid "Aide à la décision"
+msgstr "Decision support"
+
+msgid "Panier moyen"
+msgstr "Average order"
+
+msgid "Meilleurs clients"
+msgstr "Top customers"
+
+msgid "Total dépensé"
+msgstr "Total spent"
+
+msgid "Chiffre d'affaires par catégorie"
+msgstr "Revenue by category"
+
+msgid "Moyens de paiement"
+msgstr "Payment methods"
+
+msgid "Pas encore de clients."
+msgstr "No customers yet."
+
+msgid "Photo du modèle (optionnel)"
+msgstr "Model photo (optional)"
+
+msgid ""
+"Fournissez une photo : elle sera habillée aux couleurs DressIT. Sinon, une "
+"silhouette est générée."
+msgstr ""
+"Provide a photo: it will be styled in DressIT colours. Otherwise a "
+"silhouette is generated."
+
 msgid "Français"
 msgstr "French"
 

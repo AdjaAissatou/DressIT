@@ -12,18 +12,23 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib import messages as flash
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from django.db.models import Count, F, Sum
+from django.db.models import Count, DecimalField, F, Sum
+from django.db.models.functions import Coalesce
 from django.shortcuts import get_object_or_404, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from . import ai
 from .models import Category, Order, OrderItem, Product, ProductImage
-from .placeholder_images import GARMENTS, generate_image
+from .placeholder_images import GARMENTS, compose_with_photo, generate_image
 
 LOW_STOCK_THRESHOLD = 5
+
+# Le Studio IA est réservé au super-administrateur (vous).
+superadmin_required = user_passes_test(lambda u: u.is_active and u.is_superuser)
 
 
 @staff_member_required
@@ -82,6 +87,46 @@ def dashboard(request):
 
     recent_orders = Order.objects.select_related("user")[:8]
 
+    # --- Aide à la décision ---
+    # Meilleurs clients (par total dépensé sur les commandes payées).
+    agg = {}
+    for o in paid_orders.prefetch_related("items"):
+        key = (o.email or o.full_name).lower()
+        entry = agg.setdefault(
+            key, {"name": o.full_name, "email": o.email, "total": Decimal("0"), "orders": 0}
+        )
+        entry["total"] += o.total
+        entry["orders"] += 1
+    top_customers = sorted(agg.values(), key=lambda x: x["total"], reverse=True)[:6]
+
+    # Panier moyen.
+    paid_count = paid_orders.count()
+    avg_order_value = (revenue / paid_count) if paid_count else Decimal("0")
+
+    # Chiffre d'affaires par catégorie.
+    revenue_by_category = (
+        OrderItem.objects.filter(order__paid=True, product__isnull=False)
+        .values("product__category__name")
+        .annotate(
+            rev=Coalesce(
+                Sum(F("price") * F("quantity"),
+                    output_field=DecimalField(max_digits=14, decimal_places=2)),
+                Decimal("0"),
+            )
+        )
+        .order_by("-rev")[:8]
+    )
+    max_cat_rev = max((c["rev"] for c in revenue_by_category), default=Decimal("0"))
+    for c in revenue_by_category:
+        c["pct"] = int(c["rev"] / max_cat_rev * 100) if max_cat_rev else 0
+
+    # Répartition des moyens de paiement.
+    pay_labels = dict(Order.PaymentMethod.choices)
+    payment_split = [
+        {"label": pay_labels.get(row["payment_method"], row["payment_method"]), "n": row["n"]}
+        for row in Order.objects.values("payment_method").annotate(n=Count("id")).order_by("-n")
+    ]
+
     context = {
         "revenue": revenue,
         "revenue_30": revenue_30,
@@ -99,13 +144,17 @@ def dashboard(request):
         "top_products": top_products,
         "recent_orders": recent_orders,
         "categories_count": Category.objects.count(),
+        "top_customers": top_customers,
+        "avg_order_value": avg_order_value,
+        "revenue_by_category": revenue_by_category,
+        "payment_split": payment_split,
     }
     return render(request, "store/dashboard.html", context)
 
 
-@staff_member_required
+@superadmin_required
 def ai_studio(request):
-    """Studio IA : génère des descriptions (Claude) et des visuels de marque."""
+    """Studio IA (super-admin) : descriptions (Claude) et visuels de marque."""
     result = {}
     if request.method == "POST":
         action = request.POST.get("action")
@@ -145,7 +194,13 @@ def ai_studio(request):
                 palette = int(request.POST.get("palette", 0))
             except (TypeError, ValueError):
                 palette = 0
-            data = generate_image(title, subtitle, garment, palette)
+
+            # Photo du modèle fournie par l'admin → visuel de marque à partir d'elle.
+            model_photo = request.FILES.get("model_photo")
+            if model_photo:
+                data = compose_with_photo(model_photo, title, subtitle, palette)
+            else:
+                data = generate_image(title, subtitle, garment, palette)
 
             # Sauvegarde un aperçu servable.
             preview_dir = Path(settings.MEDIA_ROOT) / "ai"

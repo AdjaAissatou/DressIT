@@ -147,3 +147,44 @@ def generate_image(title, subtitle="", garment="tshirt", palette_index=0):
     buf = BytesIO()
     img.convert("RGB").save(buf, format="JPEG", quality=88)
     return buf.getvalue()
+
+
+def compose_with_photo(photo_file, title="DressIT", subtitle="", palette_index=0):
+    """Compose la photo d'un modèle sur un fond de marque avec bandeau et titre.
+
+    Sert au Studio IA quand l'admin fournit la photo du modèle : on l'habille
+    aux couleurs DressIT (fond dégradé, marque, bandeau titre) pour produire un
+    visuel prêt à l'emploi.
+    """
+    top, bottom = PALETTES[palette_index % len(PALETTES)]
+    canvas = _gradient(top, bottom).convert("RGB")
+
+    try:
+        photo = Image.open(photo_file).convert("RGB")
+    except Exception:
+        # Pas de photo exploitable : on retombe sur le générateur de silhouette.
+        return generate_image(title, subtitle, "tshirt", palette_index)
+
+    # Cadre la photo (couverture) dans une zone centrale.
+    margin_x, top_y, bottom_y = 60, 120, HEIGHT - 170
+    box_w, box_h = WIDTH - 2 * margin_x, bottom_y - top_y
+    ratio = max(box_w / photo.width, box_h / photo.height)
+    photo = photo.resize((int(photo.width * ratio), int(photo.height * ratio)))
+    left = (photo.width - box_w) // 2
+    upper = (photo.height - box_h) // 2
+    photo = photo.crop((left, upper, left + box_w, upper + box_h))
+    canvas.paste(photo, (margin_x, top_y))
+
+    draw = ImageDraw.Draw(canvas)
+    # Marque en haut.
+    draw.text((40, 40), "DressIT", font=_font(SERIF_BOLD, 40), fill=(255, 255, 255))
+    # Bandeau titre en bas.
+    draw.rectangle([(0, HEIGHT - 150), (WIDTH, HEIGHT)], fill=(26, 15, 8))
+    t = title if len(title) <= 26 else title[:25] + "…"
+    draw.text((40, HEIGHT - 118), t, font=_font(SERIF_BOLD, 46), fill=(255, 255, 255))
+    if subtitle:
+        draw.text((40, HEIGHT - 56), subtitle.upper(), font=_font(SANS, 26), fill=(201, 162, 75))
+
+    buf = BytesIO()
+    canvas.save(buf, format="JPEG", quality=88)
+    return buf.getvalue()

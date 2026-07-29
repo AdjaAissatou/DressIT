@@ -44,6 +44,21 @@ class SignUpForm(StyledFormMixin, UserCreationForm):
 class CheckoutForm(StyledFormMixin, forms.ModelForm):
     """Informations de livraison et paiement lors de la commande."""
 
+    # Moyens de paiement proposés (l'ancienne « carte » reste en base mais
+    # n'est plus offerte au client).
+    PAYMENT_CHOICES = [
+        (Order.PaymentMethod.WAVE, _("Wave")),
+        (Order.PaymentMethod.ORANGE_MONEY, _("Orange Money")),
+        (Order.PaymentMethod.COD, _("Paiement à la livraison")),
+    ]
+
+    payment_method = forms.ChoiceField(
+        label=_("Mode de paiement"),
+        choices=PAYMENT_CHOICES,
+        widget=forms.RadioSelect,
+        initial=Order.PaymentMethod.WAVE,
+    )
+
     class Meta:
         model = Order
         fields = [
@@ -59,5 +74,4 @@ class CheckoutForm(StyledFormMixin, forms.ModelForm):
         ]
         widgets = {
             "note": forms.Textarea(attrs={"rows": 3}),
-            "payment_method": forms.RadioSelect(),
         }

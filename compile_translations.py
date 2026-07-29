@@ -251,6 +251,45 @@ TRANSLATIONS = {
     "Télécharger": "Download",
     "Gabarit": "Template",
     "Indiquez au moins le nom de l'article.": "Please provide at least the item name.",
+    # Recherche par photo
+    "Recherche par photo": "Photo search",
+    "Rechercher par photo": "Search by photo",
+    "Envoyez la photo d'un vêtement, nous trouvons les articles les plus ressemblants.":
+        "Upload a photo of a garment and we'll find the closest matching items.",
+    "Choisir une photo": "Choose a photo",
+    "JPG ou PNG — un vêtement bien visible fonctionne le mieux.":
+        "JPG or PNG — a clearly visible garment works best.",
+    "Trouver des articles similaires": "Find similar items",
+    "Résultats": "Results",
+    "Aucun article ressemblant trouvé": "No similar item found",
+    "Essayez une autre photo, plus nette ou plus centrée sur le vêtement.":
+        "Try another photo, sharper or more focused on the garment.",
+    # Paiement mobile
+    "Wave": "Wave",
+    "Orange Money": "Orange Money",
+    "à configurer": "to configure",
+    "Le paiement Wave n'est pas encore configuré.": "Wave payment is not configured yet.",
+    "Le paiement Orange Money n'est pas encore configuré.": "Orange Money payment is not configured yet.",
+    "Paiement confirmé, merci !": "Payment confirmed, thank you!",
+    "Votre paiement est en cours de vérification. Vous recevrez une confirmation.":
+        "Your payment is being verified. You will receive a confirmation.",
+    "Paiement annulé. Votre commande n'a pas été validée.":
+        "Payment cancelled. Your order was not confirmed.",
+    "Paiement annulé": "Payment cancelled",
+    "Réessayer le paiement": "Retry payment",
+    "Paiement confirmé": "Payment confirmed",
+    # Aide à la décision
+    "Aide à la décision": "Decision support",
+    "Panier moyen": "Average order",
+    "Meilleurs clients": "Top customers",
+    "Total dépensé": "Total spent",
+    "Chiffre d'affaires par catégorie": "Revenue by category",
+    "Moyens de paiement": "Payment methods",
+    "Pas encore de clients.": "No customers yet.",
+    # Studio IA (photo modèle)
+    "Photo du modèle (optionnel)": "Model photo (optional)",
+    "Fournissez une photo : elle sera habillée aux couleurs DressIT. Sinon, une silhouette est générée.":
+        "Provide a photo: it will be styled in DressIT colours. Otherwise a silhouette is generated.",
     # Langues (menu déroulant Django)
     "Français": "French",
     "English": "English",

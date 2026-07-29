@@ -54,11 +54,21 @@
                     <h3 style="font-family:var(--font-body);text-transform:uppercase;letter-spacing:1px;font-size:1rem;">💳 {% trans "Mode de paiement" %}</h3>
                     <div class="pay-methods">
                         {% for radio in form.payment_method %}
-                            <label>{{ radio.tag }} <span>{{ radio.choice_label }}</span></label>
+                            <label class="pay-option pay-{{ radio.data.value }}">
+                                {{ radio.tag }}
+                                <span class="pay-ico">
+                                    {% if radio.data.value == 'wave' %}🌊{% elif radio.data.value == 'orange_money' %}🟠{% else %}🏠{% endif %}
+                                </span>
+                                <span>{{ radio.choice_label }}
+                                    {% if radio.data.value == 'wave' and not wave_enabled %}<small class="muted">({% trans "à configurer" %})</small>
+                                    {% elif radio.data.value == 'orange_money' and not om_enabled %}<small class="muted">({% trans "à configurer" %})</small>{% endif %}
+                                </span>
+                            </label>
                         {% endfor %}
                     </div>
+                    {{ form.payment_method.errors }}
                     <p class="muted" style="font-size:0.82rem;margin-top:12px;">
-                        {% trans "Paiement 100 % sécurisé. Le paiement par carte est ici en mode démonstration — branchez Stripe ou PayPal pour encaisser réellement." %}
+                        🔒 {% trans "Paiement 100 % sécurisé via Wave ou Orange Money. Vous serez redirigé·e vers l'opérateur pour valider, puis ramené·e sur DressIT." %}
                     </p>
                 </div>
             </div>
