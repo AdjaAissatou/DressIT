@@ -336,6 +336,62 @@ TRANSLATIONS = {
     # Langues (menu déroulant Django)
     "Français": "French",
     "English": "English",
+    # Back-office : variantes épuisées
+    "épuisé": "sold out",
+    "Marquer comme épuisé (affiché mais non commandable)":
+        "Mark as sold out (shown but not orderable)",
+    "Couleurs épuisées": "Sold-out colors",
+    "Tailles épuisées": "Sold-out sizes",
+    # Back-office : commandes
+    "Détail": "Details",
+    "Nom, e-mail ou n° de commande…": "Name, email or order #…",
+    "commande(s)": "order(s)",
+    "Payée": "Paid",
+    "Variante": "Variant",
+    "Gérer la commande": "Manage order",
+    "Marquée comme payée": "Marked as paid",
+    "Mettre à jour": "Update",
+    "Le client est prévenu par e-mail lors de l'expédition, la livraison ou l'annulation.":
+        "The customer is notified by email on shipping, delivery or cancellation.",
+    "Compte": "Account",
+    "Paiement": "Payment",
+    "Qté": "Qty",
+    # Back-office : tailles & couleurs
+    "Tailles & couleurs": "Sizes & colors",
+    "Les variantes proposées lors de la création d'un article.":
+        "The variants offered when creating an item.",
+    "Ajouter une taille": "Add a size",
+    "Ajouter une couleur": "Add a color",
+    "Libellé": "Label",
+    "Ajouter": "Add",
+    "Supprimer cette taille ?": "Delete this size?",
+    "Supprimer cette couleur ?": "Delete this color?",
+    "Aucune taille.": "No sizes.",
+    "Aucune couleur.": "No colors.",
+    "Hex": "Hex",
+    # Back-office : codes promo
+    "Codes promo": "Promo codes",
+    "code(s)": "code(s)",
+    "Nouveau code": "New code",
+    "Min. panier": "Min. cart",
+    "Utilisations": "Uses",
+    "Validité": "Valid until",
+    "Actif": "Active",
+    "Inactif": "Inactive",
+    "Supprimer ce code ?": "Delete this code?",
+    "Aucun code promo.": "No promo codes.",
+    "Modifier le code promo": "Edit promo code",
+    "Nouveau code promo": "New promo code",
+    "Ex : BIENVENUE10. Sera converti en majuscules.":
+        "e.g. WELCOME10. Will be uppercased.",
+    "Type de remise": "Discount type",
+    "Valeur": "Value",
+    "10 = -10 % ou -10 FCFA selon le type.": "10 = -10% or -10 FCFA depending on type.",
+    "Sous-total minimum": "Minimum subtotal",
+    "Utilisations max": "Max uses",
+    "Vide = illimité.": "Empty = unlimited.",
+    "Valable jusqu'au": "Valid until",
+    "Code actif": "Code active",
 }
 
 

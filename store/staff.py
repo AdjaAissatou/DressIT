@@ -23,8 +23,26 @@ from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from . import ai
-from .forms import CategoryForm, ProductForm
-from .models import Category, Complaint, Gender, Order, OrderItem, Product, ProductImage
+from .forms import (
+    CategoryForm,
+    ColorForm,
+    OrderStatusForm,
+    ProductForm,
+    PromoCodeForm,
+    SizeForm,
+)
+from .models import (
+    Category,
+    Color,
+    Complaint,
+    Gender,
+    Order,
+    OrderItem,
+    Product,
+    ProductImage,
+    PromoCode,
+    Size,
+)
 from .placeholder_images import GARMENTS, compose_with_photo, generate_image
 
 LOW_STOCK_THRESHOLD = 5
@@ -358,3 +376,133 @@ def category_delete(request, pk):
             category.delete()
             flash.success(request, _("Catégorie « %(n)s » supprimée.") % {"n": name})
     return redirect("manage_categories")
+
+
+# --------------------------------------------------------------------------- #
+# Back-office : gestion des commandes
+# --------------------------------------------------------------------------- #
+@staff_member_required
+def order_list(request):
+    orders = Order.objects.select_related("user").prefetch_related("items")
+    q = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "")
+    if q:
+        orders = orders.filter(
+            Q(full_name__icontains=q) | Q(email__icontains=q) | Q(id__icontains=q)
+        )
+    if status:
+        orders = orders.filter(status=status)
+
+    paginator = Paginator(orders.order_by("-created_at"), 20)
+    page = paginator.get_page(request.GET.get("page"))
+    return render(request, "store/manage/order_list.html", {
+        "page_obj": page, "orders": page.object_list,
+        "q": q, "status": status,
+        "statuses": Order.Status.choices,
+        "total": paginator.count,
+    })
+
+
+@staff_member_required
+def order_detail(request, pk):
+    order = get_object_or_404(
+        Order.objects.select_related("user").prefetch_related("items__product"), pk=pk
+    )
+    if request.method == "POST":
+        form = OrderStatusForm(request.POST, instance=order)
+        if form.is_valid():
+            form.save()  # le signal envoie l'e-mail de suivi si nécessaire
+            flash.success(request, _("Commande #%(n)s mise à jour.") % {"n": order.pk})
+            return redirect("manage_order_detail", pk=order.pk)
+    else:
+        form = OrderStatusForm(instance=order)
+    return render(request, "store/manage/order_detail.html", {
+        "order": order, "form": form,
+    })
+
+
+# --------------------------------------------------------------------------- #
+# Back-office : tailles & couleurs
+# --------------------------------------------------------------------------- #
+@staff_member_required
+def variant_list(request):
+    """Gestion combinée des tailles et des couleurs."""
+    size_form = SizeForm()
+    color_form = ColorForm()
+    if request.method == "POST":
+        kind = request.POST.get("kind")
+        if kind == "size":
+            size_form = SizeForm(request.POST)
+            if size_form.is_valid():
+                s = size_form.save()
+                flash.success(request, _("Taille « %(n)s » ajoutée.") % {"n": s.label})
+                return redirect("manage_variants")
+        elif kind == "color":
+            color_form = ColorForm(request.POST)
+            if color_form.is_valid():
+                c = color_form.save()
+                flash.success(request, _("Couleur « %(n)s » ajoutée.") % {"n": c.name})
+                return redirect("manage_variants")
+
+    return render(request, "store/manage/variant_list.html", {
+        "sizes": Size.objects.annotate(n=Count("products")).all(),
+        "colors": Color.objects.annotate(n=Count("products")).all(),
+        "size_form": size_form,
+        "color_form": color_form,
+    })
+
+
+@staff_member_required
+def size_delete(request, pk):
+    size = get_object_or_404(Size, pk=pk)
+    if request.method == "POST":
+        label = size.label
+        size.delete()
+        flash.success(request, _("Taille « %(n)s » supprimée.") % {"n": label})
+    return redirect("manage_variants")
+
+
+@staff_member_required
+def color_delete(request, pk):
+    color = get_object_or_404(Color, pk=pk)
+    if request.method == "POST":
+        name = color.name
+        color.delete()
+        flash.success(request, _("Couleur « %(n)s » supprimée.") % {"n": name})
+    return redirect("manage_variants")
+
+
+# --------------------------------------------------------------------------- #
+# Back-office : codes promo
+# --------------------------------------------------------------------------- #
+@staff_member_required
+def promo_list(request):
+    return render(request, "store/manage/promo_list.html", {
+        "promos": PromoCode.objects.all(),
+    })
+
+
+@staff_member_required
+def promo_edit(request, pk=None):
+    promo = get_object_or_404(PromoCode, pk=pk) if pk else None
+    if request.method == "POST":
+        form = PromoCodeForm(request.POST, instance=promo)
+        if form.is_valid():
+            promo = form.save()
+            flash.success(request, _("Code promo « %(n)s » enregistré.") % {"n": promo.code})
+            return redirect("manage_promos")
+    else:
+        form = PromoCodeForm(instance=promo)
+    return render(request, "store/manage/promo_form.html", {
+        "form": form, "promo": promo,
+    })
+
+
+@staff_member_required
+def promo_delete(request, pk):
+    promo = get_object_or_404(PromoCode, pk=pk)
+    if request.method == "POST":
+        code = promo.code
+        promo.delete()
+        flash.success(request, _("Code promo « %(n)s » supprimé.") % {"n": code})
+    return redirect("manage_promos")

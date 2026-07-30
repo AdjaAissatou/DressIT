@@ -46,6 +46,18 @@
                             {% for cb in form.colors %}<label class="pill-opt">{{ cb.tag }}<span>{{ cb.choice_label }}</span></label>{% endfor %}
                         </div>
                     </div>
+
+                    <div class="form-field" style="border-top:1px solid var(--border);padding-top:14px;">
+                        <label>⛔ {% trans "Marquer comme épuisé (affiché mais non commandable)" %}</label>
+                        <span class="helptext muted">{% trans "Couleurs épuisées" %}</span>
+                        <div class="pill-check pill-check-danger">
+                            {% for cb in form.sold_out_colors %}<label class="pill-opt">{{ cb.tag }}<span>{{ cb.choice_label }}</span></label>{% endfor %}
+                        </div>
+                        <span class="helptext muted" style="margin-top:8px;display:block;">{% trans "Tailles épuisées" %}</span>
+                        <div class="pill-check pill-check-danger">
+                            {% for cb in form.sold_out_sizes %}<label class="pill-opt">{{ cb.tag }}<span>{{ cb.choice_label }}</span></label>{% endfor %}
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Photos -->

@@ -66,4 +66,16 @@ urlpatterns = [
     path("gestion/categories/nouvelle/", staff.category_edit, name="manage_category_add"),
     path("gestion/categories/<int:pk>/", staff.category_edit, name="manage_category_edit"),
     path("gestion/categories/<int:pk>/supprimer/", staff.category_delete, name="manage_category_delete"),
+    # Back-office : commandes
+    path("gestion/commandes/", staff.order_list, name="manage_orders"),
+    path("gestion/commandes/<int:pk>/", staff.order_detail, name="manage_order_detail"),
+    # Back-office : tailles & couleurs
+    path("gestion/variantes/", staff.variant_list, name="manage_variants"),
+    path("gestion/variantes/taille/<int:pk>/supprimer/", staff.size_delete, name="manage_size_delete"),
+    path("gestion/variantes/couleur/<int:pk>/supprimer/", staff.color_delete, name="manage_color_delete"),
+    # Back-office : codes promo
+    path("gestion/codes-promo/", staff.promo_list, name="manage_promos"),
+    path("gestion/codes-promo/nouveau/", staff.promo_edit, name="manage_promo_add"),
+    path("gestion/codes-promo/<int:pk>/", staff.promo_edit, name="manage_promo_edit"),
+    path("gestion/codes-promo/<int:pk>/supprimer/", staff.promo_delete, name="manage_promo_delete"),
 ]

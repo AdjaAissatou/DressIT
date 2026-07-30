@@ -859,3 +859,141 @@ msgstr "French"
 
 msgid "English"
 msgstr "English"
+
+msgid "épuisé"
+msgstr "sold out"
+
+msgid "Marquer comme épuisé (affiché mais non commandable)"
+msgstr "Mark as sold out (shown but not orderable)"
+
+msgid "Couleurs épuisées"
+msgstr "Sold-out colors"
+
+msgid "Tailles épuisées"
+msgstr "Sold-out sizes"
+
+msgid "Détail"
+msgstr "Details"
+
+msgid "Nom, e-mail ou n° de commande…"
+msgstr "Name, email or order #…"
+
+msgid "commande(s)"
+msgstr "order(s)"
+
+msgid "Variante"
+msgstr "Variant"
+
+msgid "Gérer la commande"
+msgstr "Manage order"
+
+msgid "Marquée comme payée"
+msgstr "Marked as paid"
+
+msgid "Mettre à jour"
+msgstr "Update"
+
+msgid ""
+"Le client est prévenu par e-mail lors de l'expédition, la livraison ou "
+"l'annulation."
+msgstr ""
+"The customer is notified by email on shipping, delivery or cancellation."
+
+msgid "Compte"
+msgstr "Account"
+
+msgid "Tailles & couleurs"
+msgstr "Sizes & colors"
+
+msgid "Les variantes proposées lors de la création d'un article."
+msgstr "The variants offered when creating an item."
+
+msgid "Ajouter une taille"
+msgstr "Add a size"
+
+msgid "Ajouter une couleur"
+msgstr "Add a color"
+
+msgid "Libellé"
+msgstr "Label"
+
+msgid "Ajouter"
+msgstr "Add"
+
+msgid "Supprimer cette taille ?"
+msgstr "Delete this size?"
+
+msgid "Supprimer cette couleur ?"
+msgstr "Delete this color?"
+
+msgid "Aucune taille."
+msgstr "No sizes."
+
+msgid "Aucune couleur."
+msgstr "No colors."
+
+msgid "Hex"
+msgstr "Hex"
+
+msgid "Codes promo"
+msgstr "Promo codes"
+
+msgid "code(s)"
+msgstr "code(s)"
+
+msgid "Nouveau code"
+msgstr "New code"
+
+msgid "Min. panier"
+msgstr "Min. cart"
+
+msgid "Utilisations"
+msgstr "Uses"
+
+msgid "Validité"
+msgstr "Valid until"
+
+msgid "Actif"
+msgstr "Active"
+
+msgid "Inactif"
+msgstr "Inactive"
+
+msgid "Supprimer ce code ?"
+msgstr "Delete this code?"
+
+msgid "Aucun code promo."
+msgstr "No promo codes."
+
+msgid "Modifier le code promo"
+msgstr "Edit promo code"
+
+msgid "Nouveau code promo"
+msgstr "New promo code"
+
+msgid "Ex : BIENVENUE10. Sera converti en majuscules."
+msgstr "e.g. WELCOME10. Will be uppercased."
+
+msgid "Type de remise"
+msgstr "Discount type"
+
+msgid "Valeur"
+msgstr "Value"
+
+msgid "10 = -10 % ou -10 FCFA selon le type."
+msgstr "10 = -10% or -10 FCFA depending on type."
+
+msgid "Sous-total minimum"
+msgstr "Minimum subtotal"
+
+msgid "Utilisations max"
+msgstr "Max uses"
+
+msgid "Vide = illimité."
+msgstr "Empty = unlimited."
+
+msgid "Valable jusqu'au"
+msgstr "Valid until"
+
+msgid "Code actif"
+msgstr "Code active"

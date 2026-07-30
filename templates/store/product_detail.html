@@ -65,10 +65,15 @@
                 {% if product.sizes.all %}
                 <div class="option-group">
                     <label>{% trans "Taille" %}</label>
-                    <div class="option-pills">
+                    <div class="option-pills variant-group">
                         {% for size in product.sizes.all %}
-                            <input type="radio" name="size" id="size-{{ size.id }}" value="{{ size.label }}" {% if forloop.first %}checked{% endif %}>
+                            {% if size.id in sold_out_size_ids %}
+                            <input type="radio" name="size" id="size-{{ size.id }}" value="{{ size.label }}" disabled>
+                            <label for="size-{{ size.id }}" class="sold-out" title="{% trans 'Épuisé' %}">{{ size.label }}</label>
+                            {% else %}
+                            <input type="radio" name="size" id="size-{{ size.id }}" value="{{ size.label }}">
                             <label for="size-{{ size.id }}">{{ size.label }}</label>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>
@@ -77,10 +82,15 @@
                 {% if product.colors.all %}
                 <div class="option-group">
                     <label>{% trans "Couleur" %}</label>
-                    <div class="option-pills color-pills">
+                    <div class="option-pills color-pills variant-group">
                         {% for color in product.colors.all %}
-                            <input type="radio" name="color" id="color-{{ color.id }}" value="{{ color.name }}" {% if forloop.first %}checked{% endif %}>
+                            {% if color.id in sold_out_color_ids %}
+                            <input type="radio" name="color" id="color-{{ color.id }}" value="{{ color.name }}" disabled>
+                            <label for="color-{{ color.id }}" class="sold-out" title="{% trans 'Épuisé' %}"><span class="dot" style="background:{{ color.hex_code }}"></span>{{ color.name }} · {% trans "épuisé" %}</label>
+                            {% else %}
+                            <input type="radio" name="color" id="color-{{ color.id }}" value="{{ color.name }}">
                             <label for="color-{{ color.id }}"><span class="dot" style="background:{{ color.hex_code }}"></span>{{ color.name }}</label>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 </div>

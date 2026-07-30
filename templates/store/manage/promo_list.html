@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load i18n store_extras %}
+
+{% block title %}{% trans "Codes promo" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="dash-head">
+        <div><h1>🎟️ {% trans "Codes promo" %}</h1><p class="muted">{{ promos|length }} {% trans "code(s)" %}</p></div>
+        <div class="dash-actions"><a href="{% url 'manage_promo_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouveau code" %}</a></div>
+    </div>
+
+    <div class="panel" style="padding:0;overflow:hidden;">
+        <table class="table manage-table">
+            <thead>
+                <tr>
+                    <th>{% trans "Code" %}</th><th>{% trans "Remise" %}</th><th>{% trans "Min. panier" %}</th>
+                    <th>{% trans "Utilisations" %}</th><th>{% trans "Validité" %}</th><th>{% trans "Statut" %}</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in promos %}
+                <tr>
+                    <td><strong class="gold">{{ p.code }}</strong></td>
+                    <td>{% if p.discount_type == 'percent' %}−{{ p.value|floatformat:"-2" }} %{% else %}−{{ p.value|money }}{% endif %}</td>
+                    <td>{% if p.min_subtotal %}{{ p.min_subtotal|money }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                    <td>{{ p.used_count }}{% if p.max_uses %} / {{ p.max_uses }}{% endif %}</td>
+                    <td>{% if p.valid_until %}{{ p.valid_until|date:"d/m/Y" }}{% else %}<span class="muted">∞</span>{% endif %}</td>
+                    <td>{% if p.active %}<span class="status-pill status-delivered">{% trans "Actif" %}</span>{% else %}<span class="status-pill status-cancelled">{% trans "Inactif" %}</span>{% endif %}</td>
+                    <td style="text-align:right;white-space:nowrap;">
+                        <a href="{% url 'manage_promo_edit' p.id %}" class="btn btn-ghost btn-sm">✏️</a>
+                        <form method="post" action="{% url 'manage_promo_delete' p.id %}" style="display:inline;" onsubmit="return confirm('{% trans "Supprimer ce code ?" %}');">
+                            {% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">🗑</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="muted" style="text-align:center;padding:30px;">{% trans "Aucun code promo." %}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

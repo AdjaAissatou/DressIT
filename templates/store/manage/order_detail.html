@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load i18n store_extras %}
+
+{% block title %}{% trans "Commande" %} #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="breadcrumb"><a href="{% url 'manage_orders' %}">{% trans "Commandes" %}</a> / <span>#{{ order.id }}</span></div>
+    <div class="dash-head">
+        <div>
+            <h1>🧾 {% trans "Commande" %} #{{ order.id }}</h1>
+            <p class="muted">{{ order.created_at|date:"d F Y à H:i" }}</p>
+        </div>
+        <div><span class="status-pill status-{{ order.status }}">{{ order.get_status_display }}</span></div>
+    </div>
+
+    <div class="cart-layout">
+        <div>
+            <!-- Articles -->
+            <div class="panel" style="padding:0;overflow:hidden;margin-bottom:18px;">
+                <table class="table manage-table">
+                    <thead><tr><th></th><th>{% trans "Article" %}</th><th>{% trans "Variante" %}</th><th>{% trans "Prix" %}</th><th>{% trans "Qté" %}</th><th style="text-align:right;">{% trans "Total" %}</th></tr></thead>
+                    <tbody>
+                    {% for item in order.items.all %}
+                        <tr>
+                            <td>
+                                <div class="mt-thumb">
+                                    {% if item.product.main_image %}<img src="{{ item.product.main_image.url }}" alt="">{% else %}<span>👗</span>{% endif %}
+                                </div>
+                            </td>
+                            <td>
+                                {% if item.product %}<a href="{{ item.product.get_absolute_url }}"><strong>{{ item.product_name }}</strong></a>
+                                {% else %}<strong>{{ item.product_name }}</strong>{% endif %}
+                            </td>
+                            <td><small class="muted">{% if item.size %}{{ item.size }}{% endif %}{% if item.size and item.color %} · {% endif %}{% if item.color %}{{ item.color }}{% endif %}</small></td>
+                            <td>{{ item.price|money }}</td>
+                            <td>{{ item.quantity }}</td>
+                            <td style="text-align:right;"><strong>{{ item.subtotal|money }}</strong></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Totaux -->
+            <div class="panel" style="margin-bottom:18px;">
+                <div class="summary-row"><span>{% trans "Sous-total" %}</span><span>{{ order.subtotal|money }}</span></div>
+                {% if order.discount %}<div class="summary-row"><span>{% trans "Remise" %}{% if order.promo_code %} ({{ order.promo_code }}){% endif %}</span><span>− {{ order.discount|money }}</span></div>{% endif %}
+                <div class="summary-row"><span>{% trans "Livraison" %}</span><span>{{ order.shipping_cost|money }}</span></div>
+                <div class="summary-row total"><span>{% trans "Total" %}</span><span class="gold">{{ order.total|money }}</span></div>
+            </div>
+
+            <!-- Livraison & note -->
+            <div class="panel">
+                <h3 class="dash-title">🚚 {% trans "Livraison" %}</h3>
+                <p style="margin:0;line-height:1.7;">
+                    <strong>{{ order.full_name }}</strong><br>
+                    {{ order.address }}<br>
+                    {{ order.postal_code }} {{ order.city }}<br>
+                    {{ order.country }}<br>
+                    📞 {{ order.phone }} · ✉️ {{ order.email }}
+                </p>
+                {% if order.note %}<p class="muted" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">📝 {{ order.note }}</p>{% endif %}
+            </div>
+        </div>
+
+        <!-- Gestion du statut -->
+        <aside class="summary" style="position:static;">
+            <h3>⚙️ {% trans "Gérer la commande" %}</h3>
+            <form method="post" action="">
+                {% csrf_token %}
+                <div class="form-field"><label>{% trans "Statut" %}</label>{{ form.status }}{{ form.status.errors }}</div>
+                <label class="switch-row">{{ form.paid }} <span>{% trans "Marquée comme payée" %}</span></label>
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top:14px;">💾 {% trans "Mettre à jour" %}</button>
+            </form>
+            <p class="muted" style="font-size:0.8rem;margin-top:14px;">
+                {% trans "Le client est prévenu par e-mail lors de l'expédition, la livraison ou l'annulation." %}
+            </p>
+            <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:14px;font-size:0.85rem;">
+                <div class="summary-row"><span class="muted">{% trans "Paiement" %}</span><span>{{ order.get_payment_method_display }}</span></div>
+                {% if order.user %}<div class="summary-row"><span class="muted">{% trans "Compte" %}</span><span>{{ order.user.username }}</span></div>{% endif %}
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

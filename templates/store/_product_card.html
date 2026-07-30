@@ -1,5 +1,5 @@
 {% load i18n humanize store_extras %}
-<article class="product-card">
+<article class="product-card{% if not product.in_stock %} is-out{% endif %}">
     <div class="product-thumb">
         <a href="{{ product.get_absolute_url }}" class="thumb-link">
             {% if product.is_on_sale %}<span class="badge badge-sale">-{{ product.discount_percent }}%</span>{% endif %}

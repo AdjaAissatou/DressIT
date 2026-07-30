@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load i18n store_extras %}
+
+{% block title %}{% trans "Commandes" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="dash-head">
+        <div>
+            <h1>🧾 {% trans "Commandes" %}</h1>
+            <p class="muted">{{ total }} {% trans "commande(s)" %}</p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" class="manage-filters">
+        <input type="text" name="q" value="{{ q }}" class="input" placeholder="{% trans 'Nom, e-mail ou n° de commande…' %}">
+        <select name="status" class="select">
+            <option value="">{% trans "Tous les statuts" %}</option>
+            {% for val, label in statuses %}<option value="{{ val }}" {% if status == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-ghost btn-sm">{% trans "Filtrer" %}</button>
+    </form>
+
+    <div class="panel" style="padding:0;overflow:hidden;">
+        <table class="table manage-table">
+            <thead>
+                <tr>
+                    <th>{% trans "N°" %}</th><th>{% trans "Client" %}</th><th>{% trans "Date" %}</th>
+                    <th>{% trans "Articles" %}</th><th style="text-align:right;">{% trans "Total" %}</th>
+                    <th>{% trans "Paiement" %}</th><th>{% trans "Statut" %}</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for o in orders %}
+                <tr>
+                    <td><strong>#{{ o.id }}</strong></td>
+                    <td>
+                        <strong>{{ o.full_name }}</strong><br>
+                        <small class="muted">{{ o.email }}</small>
+                    </td>
+                    <td>{{ o.created_at|date:"d/m/Y H:i" }}</td>
+                    <td>{{ o.item_count }}</td>
+                    <td style="text-align:right;"><strong class="gold">{{ o.total|money }}</strong></td>
+                    <td>
+                        <small>{{ o.get_payment_method_display }}</small>
+                        {% if o.paid %}<br><small style="color:#9fdca8;">✓ {% trans "Payée" %}</small>{% endif %}
+                    </td>
+                    <td><span class="status-pill status-{{ o.status }}">{{ o.get_status_display }}</span></td>
+                    <td style="text-align:right;white-space:nowrap;">
+                        <a href="{% url 'manage_order_detail' o.id %}" class="btn btn-ghost btn-sm">{% trans "Détail" %} →</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="8" class="muted" style="text-align:center;padding:30px;">{% trans "Aucune commande." %}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}">‹</a>{% endif %}
+        <span class="current">{{ page_obj.number }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}">›</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

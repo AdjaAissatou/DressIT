@@ -4,8 +4,10 @@
     <a href="{% url 'dashboard' %}" class="{% if url == 'dashboard' %}active{% endif %}">📊 {% trans "Tableau de bord" %}</a>
     <a href="{% url 'manage_products' %}" class="{% if url == 'manage_products' or url == 'manage_product_edit' or url == 'manage_product_add' %}active{% endif %}">👗 {% trans "Articles" %}</a>
     <a href="{% url 'manage_categories' %}" class="{% if url == 'manage_categories' or url == 'manage_category_edit' or url == 'manage_category_add' %}active{% endif %}">🗂️ {% trans "Catégories" %}</a>
-    <a href="{% url 'admin:store_order_changelist' %}">🧾 {% trans "Commandes" %}</a>
+    <a href="{% url 'manage_orders' %}" class="{% if url == 'manage_orders' or url == 'manage_order_detail' %}active{% endif %}">🧾 {% trans "Commandes" %}</a>
+    <a href="{% url 'manage_variants' %}" class="{% if url == 'manage_variants' %}active{% endif %}">🎨 {% trans "Tailles & couleurs" %}</a>
+    <a href="{% url 'manage_promos' %}" class="{% if url == 'manage_promos' or url == 'manage_promo_edit' or url == 'manage_promo_add' %}active{% endif %}">🎟️ {% trans "Codes promo" %}</a>
+    <a href="{% url 'ai_studio' %}" class="{% if url == 'ai_studio' %}active{% endif %}">✨ {% trans "Studio IA" %}</a>
     <a href="{% url 'admin:store_complaint_changelist' %}">🛎️ {% trans "Réclamations" %}</a>
-    <a href="{% url 'ai_studio' %}">✨ {% trans "Studio IA" %}</a>
 </nav>
 {% endwith %}

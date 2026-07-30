@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if promo %}{% trans "Modifier le code" %}{% else %}{% trans "Nouveau code" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+    <div class="breadcrumb"><a href="{% url 'manage_promos' %}">{% trans "Codes promo" %}</a> / <span>{% if promo %}{{ promo.code }}{% else %}{% trans "Nouveau" %}{% endif %}</span></div>
+    <div class="page-head"><h1>{% if promo %}✏️ {% trans "Modifier le code promo" %}{% else %}➕ {% trans "Nouveau code promo" %}{% endif %}</h1></div>
+
+    <div class="auth-wrap" style="max-width:640px;margin:0;">
+        <form method="post" action="" class="panel">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<ul class="errorlist">{{ form.non_field_errors }}</ul>{% endif %}
+            <div class="form-grid">
+                <div class="form-field full"><label>{% trans "Code" %} *</label>{{ form.code }}{{ form.code.errors }}
+                    <span class="helptext muted">{% trans "Ex : BIENVENUE10. Sera converti en majuscules." %}</span>
+                </div>
+                <div class="form-field"><label>{% trans "Type de remise" %}</label>{{ form.discount_type }}{{ form.discount_type.errors }}</div>
+                <div class="form-field"><label>{% trans "Valeur" %} *</label>{{ form.value }}{{ form.value.errors }}
+                    <span class="helptext muted">{% trans "10 = -10 % ou -10 FCFA selon le type." %}</span>
+                </div>
+                <div class="form-field"><label>{% trans "Sous-total minimum" %}</label>{{ form.min_subtotal }}{{ form.min_subtotal.errors }}</div>
+                <div class="form-field"><label>{% trans "Utilisations max" %}</label>{{ form.max_uses }}{{ form.max_uses.errors }}
+                    <span class="helptext muted">{% trans "Vide = illimité." %}</span>
+                </div>
+                <div class="form-field"><label>{% trans "Valable jusqu'au" %}</label>{{ form.valid_until }}{{ form.valid_until.errors }}</div>
+            </div>
+            <label class="switch-row">{{ form.active }} <span>{% trans "Code actif" %}</span></label>
+            <button type="submit" class="btn btn-primary" style="margin-top:8px;">💾 {% trans "Enregistrer" %}</button>
+            <a href="{% url 'manage_promos' %}" class="btn btn-ghost btn-sm" style="margin-top:8px;">{% trans "Annuler" %}</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

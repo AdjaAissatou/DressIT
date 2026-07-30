@@ -125,7 +125,14 @@ def product_detail(request, slug):
         .prefetch_related("images")[:4]
     )
     return render(
-        request, "store/product_detail.html", {"product": product, "related": related}
+        request,
+        "store/product_detail.html",
+        {
+            "product": product,
+            "related": related,
+            "sold_out_color_ids": set(product.sold_out_colors.values_list("id", flat=True)),
+            "sold_out_size_ids": set(product.sold_out_sizes.values_list("id", flat=True)),
+        },
     )
 
 

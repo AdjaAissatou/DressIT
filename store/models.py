@@ -126,6 +126,13 @@ class Product(models.Model):
     colors = models.ManyToManyField(
         Color, blank=True, related_name="products", verbose_name=_("Couleurs disponibles")
     )
+    # Variantes momentanément épuisées (affichées mais non commandables).
+    sold_out_sizes = models.ManyToManyField(
+        Size, blank=True, related_name="sold_out_products", verbose_name=_("Tailles épuisées")
+    )
+    sold_out_colors = models.ManyToManyField(
+        Color, blank=True, related_name="sold_out_products", verbose_name=_("Couleurs épuisées")
+    )
 
     stock = models.PositiveIntegerField(_("Stock"), default=0)
     is_active = models.BooleanField(_("En vente"), default=True)

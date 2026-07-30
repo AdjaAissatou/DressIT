@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Tailles & couleurs" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="dash-head">
+        <div><h1>🎨 {% trans "Tailles & couleurs" %}</h1><p class="muted">{% trans "Les variantes proposées lors de la création d'un article." %}</p></div>
+    </div>
+
+    <div class="dash-cols" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start;">
+        <!-- Tailles -->
+        <div>
+            <div class="panel" style="margin-bottom:16px;">
+                <h3 class="dash-title">📏 {% trans "Ajouter une taille" %}</h3>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="kind" value="size">
+                    <div class="form-grid">
+                        <div class="form-field"><label>{% trans "Libellé" %} *</label>{{ size_form.label }}{{ size_form.label.errors }}</div>
+                        <div class="form-field"><label>{% trans "Ordre" %}</label>{{ size_form.order }}{{ size_form.order.errors }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" style="margin-top:10px;">＋ {% trans "Ajouter" %}</button>
+                </form>
+            </div>
+            <div class="panel" style="padding:0;overflow:hidden;">
+                <table class="table manage-table">
+                    <thead><tr><th>{% trans "Taille" %}</th><th>{% trans "Ordre" %}</th><th>{% trans "Articles" %}</th><th></th></tr></thead>
+                    <tbody>
+                    {% for s in sizes %}
+                        <tr>
+                            <td><strong>{{ s.label }}</strong></td>
+                            <td>{{ s.order }}</td>
+                            <td>{{ s.n }}</td>
+                            <td style="text-align:right;">
+                                <form method="post" action="{% url 'manage_size_delete' s.id %}" onsubmit="return confirm('{% trans "Supprimer cette taille ?" %}');">
+                                    {% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">🗑</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="4" class="muted" style="text-align:center;padding:24px;">{% trans "Aucune taille." %}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Couleurs -->
+        <div>
+            <div class="panel" style="margin-bottom:16px;">
+                <h3 class="dash-title">🎨 {% trans "Ajouter une couleur" %}</h3>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <input type="hidden" name="kind" value="color">
+                    <div class="form-grid">
+                        <div class="form-field"><label>{% trans "Nom" %} *</label>{{ color_form.name }}{{ color_form.name.errors }}</div>
+                        <div class="form-field"><label>{% trans "Couleur" %}</label>{{ color_form.hex_code }}{{ color_form.hex_code.errors }}</div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" style="margin-top:10px;">＋ {% trans "Ajouter" %}</button>
+                </form>
+            </div>
+            <div class="panel" style="padding:0;overflow:hidden;">
+                <table class="table manage-table">
+                    <thead><tr><th></th><th>{% trans "Couleur" %}</th><th>{% trans "Hex" %}</th><th>{% trans "Articles" %}</th><th></th></tr></thead>
+                    <tbody>
+                    {% for c in colors %}
+                        <tr>
+                            <td><span class="swatch-dot" style="width:24px;height:24px;background:{{ c.hex_code }}"></span></td>
+                            <td><strong>{{ c.name }}</strong></td>
+                            <td><small class="muted">{{ c.hex_code }}</small></td>
+                            <td>{{ c.n }}</td>
+                            <td style="text-align:right;">
+                                <form method="post" action="{% url 'manage_color_delete' c.id %}" onsubmit="return confirm('{% trans "Supprimer cette couleur ?" %}');">
+                                    {% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">🗑</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="5" class="muted" style="text-align:center;padding:24px;">{% trans "Aucune couleur." %}</td></tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

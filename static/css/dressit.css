@@ -486,6 +486,13 @@ img {
 
 .product-card:hover .product-thumb img { transform: scale(1.05); }
 
+/* Article épuisé : vignette grisée */
+.product-card.is-out .product-thumb img { filter: grayscale(0.85) opacity(0.65); }
+.product-card.is-out .product-thumb::after {
+    content: ""; position: absolute; inset: 0; background: rgba(20, 14, 8, 0.28); pointer-events: none;
+}
+.product-card.is-out .price { color: var(--text-muted); }
+
 .product-thumb .no-photo {
     width: 100%;
     height: 100%;
@@ -617,6 +624,14 @@ textarea.input { border-radius: var(--radius); }
 
 .color-pills label { display: inline-flex; align-items: center; gap: 8px; }
 .color-pills .dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--border); }
+
+/* Variantes épuisées : grisées, barrées et non sélectionnables */
+.option-pills input:disabled + label.sold-out {
+    cursor: not-allowed; opacity: 0.5; text-decoration: line-through;
+    background: var(--surface-2); color: var(--text-muted); border-style: dashed;
+    filter: grayscale(0.8);
+}
+.option-pills input:disabled + label.sold-out .dot { opacity: 0.5; }
 
 .qty-control { display: inline-flex; align-items: center; border: 1px solid var(--border); border-radius: 30px; overflow: hidden; }
 .qty-control button {
@@ -911,6 +926,11 @@ textarea.input { border-radius: var(--radius); }
 .pill-opt:has(input:checked), .pill-check li label:has(input:checked) {
     border-color: var(--accent); background: var(--surface-2); color: var(--accent);
 }
+/* Variante « épuisée » côté back-office : accent rouge */
+.pill-check-danger .pill-opt:has(input:checked) {
+    border-color: #c05b5b; background: rgba(192, 91, 91, 0.14); color: #d98080;
+}
+.pill-check-danger .pill-opt input { accent-color: #c05b5b; }
 
 /* Gestionnaire de photos */
 .photo-manager { display: flex; flex-wrap: wrap; gap: 12px; }

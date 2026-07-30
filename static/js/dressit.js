@@ -63,6 +63,14 @@
             });
         });
 
+        /* ---- Variantes : sélectionne la première option disponible ---- */
+        document.querySelectorAll(".variant-group").forEach(function (group) {
+            const enabled = group.querySelectorAll('input[type="radio"]:not(:disabled)');
+            if (enabled.length && !group.querySelector('input[type="radio"]:checked')) {
+                enabled[0].checked = true;
+            }
+        });
+
         /* ---- Panier : mise à jour auto de la quantité ---- */
         document.querySelectorAll("form.cart-qty-form input[type=number]").forEach(function (input) {
             input.addEventListener("change", function () {

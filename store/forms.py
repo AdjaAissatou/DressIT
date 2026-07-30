@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
-from .models import Category, Complaint, Order, Product
+from .models import Category, Color, Complaint, Order, Product, PromoCode, Size
 
 
 class StyledFormMixin:
@@ -111,13 +111,16 @@ class ProductForm(StyledFormMixin, forms.ModelForm):
         model = Product
         fields = [
             "name", "category", "gender", "description", "price",
-            "compare_at_price", "sizes", "colors", "stock",
+            "compare_at_price", "sizes", "colors",
+            "sold_out_sizes", "sold_out_colors", "stock",
             "is_active", "is_featured",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 4}),
             "sizes": forms.CheckboxSelectMultiple,
             "colors": forms.CheckboxSelectMultiple,
+            "sold_out_sizes": forms.CheckboxSelectMultiple,
+            "sold_out_colors": forms.CheckboxSelectMultiple,
         }
 
 
@@ -129,4 +132,45 @@ class CategoryForm(StyledFormMixin, forms.ModelForm):
         fields = ["name", "gender", "description", "image", "order"]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 3}),
+        }
+
+
+class OrderStatusForm(StyledFormMixin, forms.ModelForm):
+    """Mise à jour du statut (et du paiement) d'une commande côté back-office."""
+
+    class Meta:
+        model = Order
+        fields = ["status", "paid"]
+
+
+class SizeForm(StyledFormMixin, forms.ModelForm):
+    """Ajout / modification d'une taille."""
+
+    class Meta:
+        model = Size
+        fields = ["label", "order"]
+
+
+class ColorForm(StyledFormMixin, forms.ModelForm):
+    """Ajout / modification d'une couleur."""
+
+    class Meta:
+        model = Color
+        fields = ["name", "hex_code"]
+        widgets = {
+            "hex_code": forms.TextInput(attrs={"type": "color"}),
+        }
+
+
+class PromoCodeForm(StyledFormMixin, forms.ModelForm):
+    """Ajout / modification d'un code promo."""
+
+    class Meta:
+        model = PromoCode
+        fields = [
+            "code", "discount_type", "value", "min_subtotal",
+            "active", "valid_until", "max_uses",
+        ]
+        widgets = {
+            "valid_until": forms.DateInput(attrs={"type": "date"}),
         }
