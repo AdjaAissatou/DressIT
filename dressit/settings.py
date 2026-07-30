@@ -40,10 +40,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.humanize",
+    "rest_framework",
+    "rest_framework.authtoken",
+    "corsheaders",
     "store",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",  # i18n : doit suivre SessionMiddleware
@@ -152,6 +156,25 @@ EMAIL_USE_TLS = os.environ.get("DRESSIT_EMAIL_USE_TLS", "1") == "1"
 DEFAULT_FROM_EMAIL = os.environ.get("DRESSIT_FROM_EMAIL", "DressIT <no-reply@dressit.local>")
 # Adresse qui reçoit les notifications de réclamations (SAV).
 DRESSIT_ADMIN_EMAIL = os.environ.get("DRESSIT_ADMIN_EMAIL", "")
+
+# --- API REST (Django REST Framework) pour l'application mobile ---
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 12,
+}
+
+# CORS : autorise l'app mobile / un front séparé à appeler l'API.
+# En production, listez vos domaines dans DRESSIT_CORS_ORIGINS (séparés par des virgules).
+_cors = [o for o in os.environ.get("DRESSIT_CORS_ORIGINS", "").split(",") if o]
+if _cors:
+    CORS_ALLOWED_ORIGINS = _cors
+else:
+    CORS_ALLOW_ALL_ORIGINS = True  # pratique en développement
 
 # Messages : classes CSS compatibles avec notre thème
 from django.contrib.messages import constants as message_constants  # noqa: E402

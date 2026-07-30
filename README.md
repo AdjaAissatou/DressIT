@@ -162,6 +162,35 @@ aucune commande fantôme). Le **paiement à la livraison** fonctionne sans clé.
 > Les paramètres exacts (devise, endpoints dev/prod) dépendent de votre contrat
 > marchand — vérifiez-les auprès de l'opérateur.
 
+## 📱 API REST & application mobile
+
+Une **API REST** (Django REST Framework) alimente l'**application mobile**
+(dossier [`mobile/`](mobile/), Expo / React Native).
+
+**Endpoints principaux** (préfixe `/api/`, jeton d'authentification) :
+
+| Méthode | Endpoint | Rôle |
+|---|---|---|
+| POST | `/api/auth/register/` · `/api/auth/login/` | Inscription / connexion (retourne un jeton) |
+| GET | `/api/auth/me/` | Profil connecté |
+| GET | `/api/config/` | Devise, livraison, passerelles actives |
+| GET | `/api/categories/` · `/api/products/` | Catalogue (filtres `gender`, `category`, `q`, `sort`) |
+| GET | `/api/products/<slug>/` | Fiche article |
+| POST | `/api/products/search-photo/` | Recherche par photo (multipart) |
+| GET/POST | `/api/wishlist/` | Favoris (liste / bascule) |
+| POST | `/api/promo/validate/` | Valider un code promo |
+| POST | `/api/orders/create/` | Créer une commande (+ URL de paiement Wave/OM) |
+| GET | `/api/orders/` · `/api/orders/<id>/` | Mes commandes |
+| GET/POST | `/api/complaints/` | Réclamations |
+
+**Lancer l'app mobile** (téléphone via Expo Go) :
+```bash
+python manage.py runserver 0.0.0.0:8000     # backend accessible sur le réseau
+cd mobile && npm install && npm start        # puis scannez le QR code
+```
+Réglez l'URL de l'API (IP de votre machine) dans `mobile/app.json` → `extra.apiUrl`.
+Détails dans [`mobile/README.md`](mobile/README.md).
+
 ## 💳 Passer au paiement carte (optionnel)
 
 Le paiement par carte est en **mode démonstration** (la commande est marquée

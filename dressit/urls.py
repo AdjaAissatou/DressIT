@@ -30,6 +30,7 @@ urlpatterns = [
         ),
         name="password_change_done",
     ),
+    path("api/", include("store.api.urls")),
     path("", include("store.urls")),
 ]
 

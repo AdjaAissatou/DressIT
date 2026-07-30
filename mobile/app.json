@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "DressIT",
+    "slug": "dressit-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#241a13"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": { "supportsTablet": true },
+    "android": {
+      "package": "com.dressit.mobile"
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        { "photosPermission": "DressIT utilise vos photos pour la recherche par image." }
+      ]
+    ],
+    "extra": {
+      "apiUrl": "http://192.168.1.10:8000/api"
+    }
+  }
+}
