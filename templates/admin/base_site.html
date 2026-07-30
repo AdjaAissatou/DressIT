@@ -1,0 +1,67 @@
+{% extends "admin/base.html" %}
+{% load i18n %}
+
+{% block title %}{{ title }} | DressIT{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+    <a href="{% url 'admin:index' %}" style="font-family:'Playfair Display',Georgia,serif;font-weight:700;letter-spacing:1px;">
+        Dress<span style="color:#e0bd6a;">IT</span> — {% trans "Administration" %}
+    </a>
+</div>
+{% endblock %}
+
+{% block nav-global %}
+<a href="/gestion/" style="color:#fff;background:rgba(255,255,255,.14);padding:7px 14px;border-radius:20px;font-weight:600;white-space:nowrap;">📊 {% trans "Tableau de bord" %}</a>
+&nbsp;
+<a href="/" style="color:#fff;background:rgba(255,255,255,.14);padding:7px 14px;border-radius:20px;font-weight:600;white-space:nowrap;">🛍️ {% trans "Voir la boutique" %}</a>
+{% endblock %}
+
+{% block extrastyle %}{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Palette DressIT appliquée aux variables de l'admin Django */
+:root {
+    --primary: #55402f;
+    --secondary: #3d2d22;
+    --accent: #c9a24b;
+    --primary-fg: #fff;
+
+    --header-color: #f0d79c;
+    --header-branding-color: #e0bd6a;
+    --header-bg: #2f221a;
+    --header-link-color: #f7f1e6;
+
+    --breadcrumbs-fg: #e8ddc9;
+    --breadcrumbs-link-fg: #f7f1e6;
+    --breadcrumbs-bg: #55402f;
+
+    --link-fg: #a67c2e;
+    --link-hover-color: #c9a24b;
+    --link-selected-fg: #8a6a2a;
+
+    --button-bg: #a67c2e;
+    --button-fg: #fff;
+    --button-hover-bg: #b8912f;
+    --default-button-bg: #55402f;
+    --default-button-hover-bg: #6b4f3a;
+    --close-button-bg: #8a7358;
+    --close-button-hover-bg: #6b5844;
+
+    --object-tools-bg: #55402f;
+    --object-tools-fg: #fff;
+    --object-tools-hover-bg: #3d2d22;
+
+    --selected-bg: #f3ead9;
+    --selected-row: #faf3e4;
+    --message-success-bg: #e8f5e9;
+}
+body { font-family: "Poppins", "Segoe UI", system-ui, sans-serif; }
+#branding h1, #branding h1 a:link, #branding h1 a:visited { color: #fff; }
+div.breadcrumbs a:hover { color: #fff; }
+.module h2, .module caption, .inline-group h2 { font-family: "Poppins", sans-serif; letter-spacing: .5px; }
+a.addlink, a.changelink, a.viewlink { color: var(--link-fg); }
+#nav-global { display: inline-flex; gap: 8px; align-items: center; }
+</style>
+{% endblock %}

@@ -691,11 +691,13 @@ textarea.input { border-radius: var(--radius); }
 
 /* Recherche par photo */
 .photo-drop {
+    display: block; width: 100%; box-sizing: border-box;
     border: 2px dashed var(--border); border-radius: var(--radius); padding: 40px 20px;
     text-align: center; background: var(--surface); cursor: pointer; transition: border-color var(--transition);
 }
 .photo-drop:hover { border-color: var(--accent); }
 .photo-drop .icon { font-size: 3rem; }
+.photo-drop strong { display: block; margin-top: 6px; }
 .photo-drop input[type=file] { display: none; }
 .photo-preview { max-width: 220px; border-radius: var(--radius); margin: 14px auto 0; display: none; }
 

@@ -24,6 +24,14 @@ admin.site.site_header = "DressIT — Administration"
 admin.site.site_title = "DressIT"
 admin.site.index_title = _("Gestion de la boutique")
 
+# Retire l'entrée « Groupes » (inutile pour la gestion de la boutique).
+from django.contrib.auth.models import Group  # noqa: E402
+
+try:
+    admin.site.unregister(Group)
+except admin.sites.NotRegistered:  # pragma: no cover
+    pass
+
 
 class ProductImageInline(admin.TabularInline):
     model = ProductImage

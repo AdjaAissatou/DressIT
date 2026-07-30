@@ -176,18 +176,17 @@ def cart_remove(request, key):
 # --------------------------------------------------------------------------- #
 # Commande & paiement
 # --------------------------------------------------------------------------- #
+@login_required
 def checkout(request):
     cart = Cart(request)
     if len(cart) == 0:
         messages.warning(request, _("Votre panier est vide."))
         return redirect("cart")
 
-    initial = {}
-    if request.user.is_authenticated:
-        initial = {
-            "full_name": request.user.get_full_name() or request.user.username,
-            "email": request.user.email,
-        }
+    initial = {
+        "full_name": request.user.get_full_name() or request.user.username,
+        "email": request.user.email,
+    }
 
     if request.method == "POST":
         form = CheckoutForm(request.POST)
