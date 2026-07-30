@@ -12,6 +12,16 @@ from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Charge automatiquement les variables d'un fichier « .env » à la racine du
+# projet (clés Wave / Orange Money, e-mail, SECRET_KEY…). Facultatif : si
+# python-dotenv n'est pas installé, on se rabat sur les variables système.
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(BASE_DIR / ".env")
+except ModuleNotFoundError:
+    pass
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # En production, définissez la variable d'environnement DRESSIT_SECRET_KEY.
