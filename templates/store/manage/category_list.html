@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Catégories" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="dash-head">
+        <div><h1>🗂️ {% trans "Catégories" %}</h1><p class="muted">{{ categories|length }} {% trans "catégorie(s)" %}</p></div>
+        <div class="dash-actions"><a href="{% url 'manage_category_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvelle catégorie" %}</a></div>
+    </div>
+
+    <div class="panel" style="padding:0;overflow:hidden;">
+        <table class="table manage-table">
+            <thead><tr><th></th><th>{% trans "Nom" %}</th><th>{% trans "Rayon" %}</th><th>{% trans "Articles" %}</th><th>{% trans "Ordre" %}</th><th></th></tr></thead>
+            <tbody>
+            {% for c in categories %}
+                <tr>
+                    <td><div class="mt-thumb">{% if c.image %}<img src="{{ c.image.url }}" alt="">{% else %}<span>🗂️</span>{% endif %}</div></td>
+                    <td><strong>{{ c.name }}</strong></td>
+                    <td>{{ c.get_gender_display }}</td>
+                    <td>{{ c.n }}</td>
+                    <td>{{ c.order }}</td>
+                    <td style="white-space:nowrap;text-align:right;">
+                        <a href="{% url 'manage_category_edit' c.id %}" class="btn btn-ghost btn-sm">✏️</a>
+                        <form method="post" action="{% url 'manage_category_delete' c.id %}" style="display:inline;" onsubmit="return confirm('{% trans "Supprimer cette catégorie ?" %}');">
+                            {% csrf_token %}<button class="btn btn-ghost btn-sm" type="submit">🗑</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="6" class="muted" style="text-align:center;padding:30px;">{% trans "Aucune catégorie." %}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

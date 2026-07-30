@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if product %}{% trans "Modifier l'article" %}{% else %}{% trans "Nouvel article" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="breadcrumb"><a href="{% url 'manage_products' %}">{% trans "Articles" %}</a> / <span>{% if product %}{{ product.name }}{% else %}{% trans "Nouvel article" %}{% endif %}</span></div>
+    <div class="page-head"><h1>{% if product %}✏️ {% trans "Modifier l'article" %}{% else %}➕ {% trans "Nouvel article" %}{% endif %}</h1></div>
+
+    <form method="post" action="" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="cart-layout">
+            <div>
+                <!-- Informations -->
+                <div class="panel" style="margin-bottom:18px;">
+                    <h3 class="dash-title">📝 {% trans "Informations" %}</h3>
+                    {% if form.non_field_errors %}<ul class="errorlist">{{ form.non_field_errors }}</ul>{% endif %}
+                    <div class="form-field full">
+                        <label>{% trans "Nom de l'article" %} *</label>{{ form.name }}{{ form.name.errors }}
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-field"><label>{% trans "Catégorie" %} *</label>{{ form.category }}{{ form.category.errors }}</div>
+                        <div class="form-field"><label>{% trans "Rayon" %} *</label>{{ form.gender }}{{ form.gender.errors }}</div>
+                    </div>
+                    <div class="form-field full">
+                        <label>{% trans "Description" %}</label>{{ form.description }}{{ form.description.errors }}
+                        <span class="helptext muted">💡 {% trans "Astuce : générez-la avec le Studio IA." %}</span>
+                    </div>
+                </div>
+
+                <!-- Variantes -->
+                <div class="panel">
+                    <h3 class="dash-title">🎨 {% trans "Tailles & couleurs" %}</h3>
+                    <div class="form-field">
+                        <label>{% trans "Tailles disponibles" %}</label>
+                        <div class="pill-check">
+                            {% for cb in form.sizes %}<label class="pill-opt">{{ cb.tag }}<span>{{ cb.choice_label }}</span></label>{% endfor %}
+                        </div>
+                    </div>
+                    <div class="form-field">
+                        <label>{% trans "Couleurs disponibles" %}</label>
+                        <div class="pill-check">
+                            {% for cb in form.colors %}<label class="pill-opt">{{ cb.tag }}<span>{{ cb.choice_label }}</span></label>{% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photos -->
+                <div class="panel" style="margin-top:18px;">
+                    <h3 class="dash-title">🖼️ {% trans "Photos" %}</h3>
+                    {% if product and product.images.all %}
+                    <div class="photo-manager">
+                        {% for img in product.images.all %}
+                        <label class="pm-item">
+                            <img src="{{ img.image.url }}" alt="">
+                            <span class="pm-del"><input type="checkbox" name="delete_photo" value="{{ img.id }}"> {% trans "Supprimer" %}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <label class="photo-drop" style="margin-top:12px;" for="photos-input">
+                        <div class="icon">📸</div>
+                        <strong>{% trans "Ajouter des photos" %}</strong>
+                        <p class="muted" style="font-size:0.85rem;margin:4px 0 0;">{% trans "Plusieurs photos possibles (JPG/PNG)." %}</p>
+                        <input type="file" name="photos" id="photos-input" accept="image/*" multiple>
+                        <span id="photos-count" class="gold" style="display:block;margin-top:8px;"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Colonne latérale -->
+            <aside class="summary" style="position:static;">
+                <h3>{% trans "Prix" %}</h3>
+                <div class="form-field"><label>{% trans "Prix (FCFA)" %} *</label>{{ form.price }}{{ form.price.errors }}</div>
+                <div class="form-field"><label>{% trans "Prix barré (avant promo)" %}</label>{{ form.compare_at_price }}{{ form.compare_at_price.errors }}</div>
+
+                <h3 style="margin-top:18px;">{% trans "Stock & visibilité" %}</h3>
+                <div class="form-field"><label>{% trans "Stock" %}</label>{{ form.stock }}{{ form.stock.errors }}</div>
+                <label class="switch-row">{{ form.is_active }} <span>{% trans "En vente (visible)" %}</span></label>
+                <label class="switch-row">{{ form.is_featured }} <span>{% trans "Mettre en avant (accueil)" %}</span></label>
+
+                <button type="submit" class="btn btn-primary btn-block" style="margin-top:18px;">💾 {% trans "Enregistrer" %}</button>
+                <a href="{% url 'manage_products' %}" class="btn btn-ghost btn-block btn-sm" style="margin-top:10px;">{% trans "Annuler" %}</a>
+            </aside>
+        </div>
+    </form>
+</div>
+
+<script>
+    (function(){
+        var input=document.getElementById('photos-input');
+        var count=document.getElementById('photos-count');
+        if(input) input.addEventListener('change',function(){
+            count.textContent = input.files.length ? input.files.length+' {% trans "photo(s) sélectionnée(s)" %}' : '';
+        });
+    })();
+</script>
+{% endblock %}

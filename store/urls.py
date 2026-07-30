@@ -56,4 +56,14 @@ urlpatterns = [
     # Gestion (staff)
     path("gestion/", staff.dashboard, name="dashboard"),
     path("gestion/studio-ia/", staff.ai_studio, name="ai_studio"),
+    # Back-office : articles
+    path("gestion/articles/", staff.product_list, name="manage_products"),
+    path("gestion/articles/nouveau/", staff.product_edit, name="manage_product_add"),
+    path("gestion/articles/<int:pk>/", staff.product_edit, name="manage_product_edit"),
+    path("gestion/articles/<int:pk>/supprimer/", staff.product_delete, name="manage_product_delete"),
+    # Back-office : catégories
+    path("gestion/categories/", staff.category_list, name="manage_categories"),
+    path("gestion/categories/nouvelle/", staff.category_edit, name="manage_category_add"),
+    path("gestion/categories/<int:pk>/", staff.category_edit, name="manage_category_edit"),
+    path("gestion/categories/<int:pk>/supprimer/", staff.category_delete, name="manage_category_delete"),
 ]

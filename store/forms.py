@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.utils.translation import gettext_lazy as _
 
-from .models import Complaint, Order
+from .models import Category, Complaint, Order, Product
 
 
 class StyledFormMixin:
@@ -15,7 +15,10 @@ class StyledFormMixin:
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             widget = field.widget
-            if isinstance(widget, (forms.RadioSelect, forms.CheckboxInput)):
+            if isinstance(
+                widget,
+                (forms.RadioSelect, forms.CheckboxInput, forms.CheckboxSelectMultiple),
+            ):
                 continue
             css = "select" if isinstance(widget, forms.Select) else "input"
             existing = widget.attrs.get("class", "")
@@ -99,3 +102,31 @@ class ComplaintForm(StyledFormMixin, forms.ModelForm):
 
             self.fields["order"].queryset = Order.objects.none()
             self.fields["order"].widget = forms.HiddenInput()
+
+
+class ProductForm(StyledFormMixin, forms.ModelForm):
+    """Ajout / modification d'un article depuis le back-office DressIT."""
+
+    class Meta:
+        model = Product
+        fields = [
+            "name", "category", "gender", "description", "price",
+            "compare_at_price", "sizes", "colors", "stock",
+            "is_active", "is_featured",
+        ]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 4}),
+            "sizes": forms.CheckboxSelectMultiple,
+            "colors": forms.CheckboxSelectMultiple,
+        }
+
+
+class CategoryForm(StyledFormMixin, forms.ModelForm):
+    """Ajout / modification d'une catégorie."""
+
+    class Meta:
+        model = Category
+        fields = ["name", "gender", "description", "image", "order"]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 3}),
+        }

@@ -15,14 +15,16 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.models import User
 from django.core.files.base import ContentFile
-from django.db.models import Count, DecimalField, F, Sum
+from django.core.paginator import Paginator
+from django.db.models import Count, DecimalField, F, Q, Sum
 from django.db.models.functions import Coalesce
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext as _
 
 from . import ai
-from .models import Category, Complaint, Order, OrderItem, Product, ProductImage
+from .forms import CategoryForm, ProductForm
+from .models import Category, Complaint, Gender, Order, OrderItem, Product, ProductImage
 from .placeholder_images import GARMENTS, compose_with_photo, generate_image
 
 LOW_STOCK_THRESHOLD = 5
@@ -250,3 +252,109 @@ def ai_studio(request):
         "garments": sorted(GARMENTS.keys()),
     }
     return render(request, "store/ai_studio.html", context)
+
+
+# --------------------------------------------------------------------------- #
+# Back-office : gestion des articles (catalogue)
+# --------------------------------------------------------------------------- #
+@staff_member_required
+def product_list(request):
+    products = Product.objects.select_related("category").prefetch_related("images")
+    q = request.GET.get("q", "").strip()
+    gender = request.GET.get("gender", "")
+    status = request.GET.get("status", "")
+    if q:
+        products = products.filter(Q(name__icontains=q) | Q(category__name__icontains=q))
+    if gender:
+        products = products.filter(gender=gender)
+    if status == "active":
+        products = products.filter(is_active=True)
+    elif status == "inactive":
+        products = products.filter(is_active=False)
+    elif status == "out":
+        products = products.filter(stock=0)
+
+    paginator = Paginator(products.order_by("-created_at"), 15)
+    page = paginator.get_page(request.GET.get("page"))
+    return render(request, "store/manage/product_list.html", {
+        "page_obj": page, "products": page.object_list,
+        "q": q, "gender": gender, "status": status,
+        "genders": Gender.choices,
+        "total": paginator.count,
+    })
+
+
+@staff_member_required
+def product_edit(request, pk=None):
+    product = get_object_or_404(Product, pk=pk) if pk else None
+    if request.method == "POST":
+        form = ProductForm(request.POST, instance=product)
+        if form.is_valid():
+            product = form.save()
+            # Photos supprimées
+            for img_id in request.POST.getlist("delete_photo"):
+                product.images.filter(id=img_id).delete()
+            # Nouvelles photos
+            for f in request.FILES.getlist("photos"):
+                ProductImage.objects.create(product=product, image=f, alt=product.name)
+            flash.success(request, _("Article « %(n)s » enregistré.") % {"n": product.name})
+            return redirect("manage_products")
+    else:
+        form = ProductForm(instance=product)
+    return render(request, "store/manage/product_form.html", {
+        "form": form, "product": product,
+    })
+
+
+@staff_member_required
+def product_delete(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if request.method == "POST":
+        name = product.name
+        try:
+            product.delete()
+            flash.success(request, _("Article « %(n)s » supprimé.") % {"n": name})
+        except Exception:
+            # Article référencé par des commandes : on le désactive plutôt.
+            product.is_active = False
+            product.save(update_fields=["is_active"])
+            flash.warning(request, _("Article lié à des commandes : il a été désactivé."))
+    return redirect("manage_products")
+
+
+# --------------------------------------------------------------------------- #
+# Back-office : gestion des catégories
+# --------------------------------------------------------------------------- #
+@staff_member_required
+def category_list(request):
+    categories = Category.objects.annotate(n=Count("products")).order_by("order", "name")
+    return render(request, "store/manage/category_list.html", {"categories": categories})
+
+
+@staff_member_required
+def category_edit(request, pk=None):
+    category = get_object_or_404(Category, pk=pk) if pk else None
+    if request.method == "POST":
+        form = CategoryForm(request.POST, request.FILES, instance=category)
+        if form.is_valid():
+            cat = form.save()
+            flash.success(request, _("Catégorie « %(n)s » enregistrée.") % {"n": cat.name})
+            return redirect("manage_categories")
+    else:
+        form = CategoryForm(instance=category)
+    return render(request, "store/manage/category_form.html", {
+        "form": form, "category": category,
+    })
+
+
+@staff_member_required
+def category_delete(request, pk):
+    category = get_object_or_404(Category, pk=pk)
+    if request.method == "POST":
+        if category.products.exists():
+            flash.error(request, _("Impossible : des articles utilisent cette catégorie."))
+        else:
+            name = category.name
+            category.delete()
+            flash.success(request, _("Catégorie « %(n)s » supprimée.") % {"n": name})
+    return redirect("manage_categories")

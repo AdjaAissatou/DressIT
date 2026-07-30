@@ -5,16 +5,17 @@
 
 {% block content %}
 <div class="container">
+    {% include "store/manage/_nav.html" %}
     <div class="dash-head">
         <div>
             <h1>{% trans "Tableau de bord" %}</h1>
             <p class="muted">{% trans "Vue d'ensemble de votre boutique DressIT" %}</p>
         </div>
         <div class="dash-actions">
-            <a href="{% url 'admin:store_product_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvel article" %}</a>
-            <a href="{% url 'admin:store_category_add' %}" class="btn btn-ghost btn-sm">＋ {% trans "Catégorie" %}</a>
+            <a href="{% url 'manage_product_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvel article" %}</a>
+            <a href="{% url 'manage_products' %}" class="btn btn-ghost btn-sm">👗 {% trans "Articles" %}</a>
             <a href="{% url 'ai_studio' %}" class="btn btn-ghost btn-sm">✨ {% trans "Studio IA" %}</a>
-            <a href="{% url 'admin:index' %}" class="btn btn-ghost btn-sm">⚙ {% trans "Administration" %}</a>
+            <a href="{% url 'admin:index' %}" class="btn btn-ghost btn-sm">⚙ {% trans "Admin avancé" %}</a>
         </div>
     </div>
 

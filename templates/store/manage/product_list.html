@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load i18n store_extras %}
+
+{% block title %}{% trans "Articles" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="dash-head">
+        <div>
+            <h1>👗 {% trans "Articles" %}</h1>
+            <p class="muted">{{ total }} {% trans "article(s) dans le catalogue" %}</p>
+        </div>
+        <div class="dash-actions">
+            <a href="{% url 'manage_product_add' %}" class="btn btn-primary btn-sm">＋ {% trans "Nouvel article" %}</a>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" class="manage-filters">
+        <input type="text" name="q" value="{{ q }}" class="input" placeholder="{% trans 'Rechercher un article…' %}">
+        <select name="gender" class="select">
+            <option value="">{% trans "Tous les rayons" %}</option>
+            {% for val, label in genders %}<option value="{{ val }}" {% if gender == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <select name="status" class="select">
+            <option value="">{% trans "Tous les statuts" %}</option>
+            <option value="active" {% if status == 'active' %}selected{% endif %}>{% trans "En vente" %}</option>
+            <option value="inactive" {% if status == 'inactive' %}selected{% endif %}>{% trans "Masqués" %}</option>
+            <option value="out" {% if status == 'out' %}selected{% endif %}>{% trans "En rupture" %}</option>
+        </select>
+        <button class="btn btn-ghost btn-sm">{% trans "Filtrer" %}</button>
+    </form>
+
+    <div class="panel" style="padding:0;overflow:hidden;">
+        <table class="table manage-table">
+            <thead>
+                <tr>
+                    <th></th><th>{% trans "Article" %}</th><th>{% trans "Rayon" %}</th>
+                    <th style="text-align:right;">{% trans "Prix" %}</th><th>{% trans "Stock" %}</th>
+                    <th>{% trans "Statut" %}</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for p in products %}
+                <tr>
+                    <td>
+                        <div class="mt-thumb">
+                            {% if p.main_image %}<img src="{{ p.main_image.url }}" alt="">{% else %}<span>👗</span>{% endif %}
+                        </div>
+                    </td>
+                    <td>
+                        <strong>{{ p.name }}</strong><br>
+                        <small class="muted">{{ p.category.name }}</small>
+                    </td>
+                    <td>{{ p.get_gender_display }}</td>
+                    <td style="text-align:right;">
+                        <strong class="gold">{{ p.price|money }}</strong>
+                        {% if p.is_on_sale %}<br><small class="muted" style="text-decoration:line-through;">{{ p.compare_at_price|money }}</small>{% endif %}
+                    </td>
+                    <td>
+                        {% if p.stock == 0 %}<span class="status-pill status-cancelled">{% trans "Épuisé" %}</span>
+                        {% elif p.stock <= 5 %}<span class="status-pill status-pending">{{ p.stock }}</span>
+                        {% else %}{{ p.stock }}{% endif %}
+                    </td>
+                    <td>
+                        {% if p.is_active %}<span class="status-pill status-delivered">{% trans "En vente" %}</span>{% else %}<span class="status-pill status-cancelled">{% trans "Masqué" %}</span>{% endif %}
+                        {% if p.is_featured %}<br><small class="gold">★ {% trans "En avant" %}</small>{% endif %}
+                    </td>
+                    <td style="white-space:nowrap;text-align:right;">
+                        <a href="{% url 'manage_product_edit' p.id %}" class="btn btn-ghost btn-sm">✏️</a>
+                        <form method="post" action="{% url 'manage_product_delete' p.id %}" style="display:inline;"
+                              onsubmit="return confirm('{% trans "Supprimer cet article ?" %}');">
+                            {% csrf_token %}
+                            <button class="btn btn-ghost btn-sm" type="submit">🗑</button>
+                        </form>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="muted" style="text-align:center;padding:30px;">{% trans "Aucun article. Cliquez sur « Nouvel article »." %}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}">‹</a>{% endif %}
+        <span class="current">{{ page_obj.number }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}">›</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

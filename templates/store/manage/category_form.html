@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if category %}{% trans "Modifier la catégorie" %}{% else %}{% trans "Nouvelle catégorie" %}{% endif %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+    <div class="breadcrumb"><a href="{% url 'manage_categories' %}">{% trans "Catégories" %}</a> / <span>{% if category %}{{ category.name }}{% else %}{% trans "Nouvelle" %}{% endif %}</span></div>
+    <div class="page-head"><h1>{% if category %}✏️ {% trans "Modifier la catégorie" %}{% else %}➕ {% trans "Nouvelle catégorie" %}{% endif %}</h1></div>
+
+    <div class="auth-wrap" style="max-width:640px;margin:0;">
+        <form method="post" action="" enctype="multipart/form-data" class="panel">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-field"><label>{% trans "Nom" %} *</label>{{ form.name }}{{ form.name.errors }}</div>
+                <div class="form-field"><label>{% trans "Rayon" %}</label>{{ form.gender }}{{ form.gender.errors }}</div>
+                <div class="form-field full"><label>{% trans "Description" %}</label>{{ form.description }}</div>
+                <div class="form-field"><label>{% trans "Ordre d'affichage" %}</label>{{ form.order }}</div>
+                <div class="form-field">
+                    <label>{% trans "Image" %}</label>
+                    {% if category.image %}<img src="{{ category.image.url }}" alt="" style="width:80px;height:80px;object-fit:cover;border-radius:8px;margin-bottom:6px;">{% endif %}
+                    {{ form.image }}
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top:8px;">💾 {% trans "Enregistrer" %}</button>
+            <a href="{% url 'manage_categories' %}" class="btn btn-ghost btn-sm" style="margin-top:8px;">{% trans "Annuler" %}</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
