@@ -875,6 +875,15 @@ msgstr "Sold-out sizes"
 msgid "Détail"
 msgstr "Details"
 
+msgid "Filtrer"
+msgstr "Filter"
+
+msgid "Tous les statuts"
+msgstr "All statuses"
+
+msgid "Tous les rayons"
+msgstr "All departments"
+
 msgid "Nom, e-mail ou n° de commande…"
 msgstr "Name, email or order #…"
 

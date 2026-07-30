@@ -344,6 +344,9 @@ TRANSLATIONS = {
     "Tailles épuisées": "Sold-out sizes",
     # Back-office : commandes
     "Détail": "Details",
+    "Filtrer": "Filter",
+    "Tous les statuts": "All statuses",
+    "Tous les rayons": "All departments",
     "Nom, e-mail ou n° de commande…": "Name, email or order #…",
     "commande(s)": "order(s)",
     "Payée": "Paid",

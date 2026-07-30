@@ -528,7 +528,7 @@ img {
 .price-old { text-decoration: line-through; color: var(--text-muted); font-size: 0.9rem; }
 
 .swatches { display: flex; gap: 5px; margin-top: 4px; }
-.swatch-dot { width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border); }
+.swatch-dot { display: inline-block; width: 15px; height: 15px; border-radius: 50%; border: 1px solid var(--border); flex: none; }
 
 /* --------------------------------------------------------------- Layout with sidebar */
 .shop-layout { display: grid; grid-template-columns: 240px 1fr; gap: 30px; align-items: start; }
