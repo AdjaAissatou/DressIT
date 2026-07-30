@@ -46,6 +46,13 @@
             });
         }
 
+        /* ---- Filtres du back-office : appliquer dès qu'on change une liste ---- */
+        document.querySelectorAll(".manage-filters select").forEach(function (sel) {
+            sel.addEventListener("change", function () {
+                sel.closest("form").submit();
+            });
+        });
+
         /* ---- Contrôles de quantité (+/-) ---- */
         document.querySelectorAll(".qty-control").forEach(function (ctrl) {
             const input = ctrl.querySelector("input");
