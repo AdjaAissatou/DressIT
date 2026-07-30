@@ -26,11 +26,13 @@ from . import ai
 from .forms import (
     CategoryForm,
     ColorForm,
+    ComplaintReplyForm,
     OrderStatusForm,
     ProductForm,
     PromoCodeForm,
     SizeForm,
 )
+from .emails import send_complaint_response
 from .models import (
     Category,
     Color,
@@ -506,3 +508,61 @@ def promo_delete(request, pk):
         promo.delete()
         flash.success(request, _("Code promo « %(n)s » supprimé.") % {"n": code})
     return redirect("manage_promos")
+
+
+# --------------------------------------------------------------------------- #
+# Back-office : réclamations (SAV)
+# --------------------------------------------------------------------------- #
+@staff_member_required
+def complaint_list(request):
+    complaints = Complaint.objects.select_related("order", "user")
+    q = request.GET.get("q", "").strip()
+    status = request.GET.get("status", "")
+    subject = request.GET.get("subject", "")
+    if q:
+        complaints = complaints.filter(
+            Q(name__icontains=q) | Q(email__icontains=q) | Q(id__icontains=q)
+        )
+    if status:
+        complaints = complaints.filter(status=status)
+    if subject:
+        complaints = complaints.filter(subject=subject)
+
+    paginator = Paginator(complaints.order_by("-created_at"), 20)
+    page = paginator.get_page(request.GET.get("page"))
+    return render(request, "store/manage/complaint_list.html", {
+        "page_obj": page, "complaints": page.object_list,
+        "q": q, "status": status, "subject": subject,
+        "statuses": Complaint.Status.choices,
+        "subjects": Complaint.Subject.choices,
+        "total": paginator.count,
+        "open_count": Complaint.objects.filter(
+            status__in=[Complaint.Status.OPEN, Complaint.Status.IN_PROGRESS]
+        ).count(),
+    })
+
+
+@staff_member_required
+def complaint_detail(request, pk):
+    complaint = get_object_or_404(
+        Complaint.objects.select_related("order", "user"), pk=pk
+    )
+    if request.method == "POST":
+        form = ComplaintReplyForm(request.POST, instance=complaint)
+        if form.is_valid():
+            complaint = form.save()
+            # Envoie la réponse au client par e-mail s'il y a un texte de réponse.
+            if complaint.response.strip():
+                send_complaint_response(complaint, request)
+                flash.success(
+                    request,
+                    _("Réponse envoyée à %(e)s.") % {"e": complaint.email},
+                )
+            else:
+                flash.success(request, _("Réclamation mise à jour."))
+            return redirect("manage_complaint_detail", pk=complaint.pk)
+    else:
+        form = ComplaintReplyForm(instance=complaint)
+    return render(request, "store/manage/complaint_detail.html", {
+        "complaint": complaint, "form": form,
+    })

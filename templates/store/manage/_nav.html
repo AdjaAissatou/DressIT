@@ -8,6 +8,6 @@
     <a href="{% url 'manage_variants' %}" class="{% if url == 'manage_variants' %}active{% endif %}">🎨 {% trans "Tailles & couleurs" %}</a>
     <a href="{% url 'manage_promos' %}" class="{% if url == 'manage_promos' or url == 'manage_promo_edit' or url == 'manage_promo_add' %}active{% endif %}">🎟️ {% trans "Codes promo" %}</a>
     <a href="{% url 'ai_studio' %}" class="{% if url == 'ai_studio' %}active{% endif %}">✨ {% trans "Studio IA" %}</a>
-    <a href="{% url 'admin:store_complaint_changelist' %}">🛎️ {% trans "Réclamations" %}</a>
+    <a href="{% url 'manage_complaints' %}" class="{% if url == 'manage_complaints' or url == 'manage_complaint_detail' %}active{% endif %}">🛎️ {% trans "Réclamations" %}</a>
 </nav>
 {% endwith %}

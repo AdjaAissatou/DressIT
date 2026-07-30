@@ -162,6 +162,17 @@ class ColorForm(StyledFormMixin, forms.ModelForm):
         }
 
 
+class ComplaintReplyForm(StyledFormMixin, forms.ModelForm):
+    """Réponse du service client à une réclamation (back-office)."""
+
+    class Meta:
+        model = Complaint
+        fields = ["status", "response"]
+        widgets = {
+            "response": forms.Textarea(attrs={"rows": 6}),
+        }
+
+
 class PromoCodeForm(StyledFormMixin, forms.ModelForm):
     """Ajout / modification d'un code promo."""
 

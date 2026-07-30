@@ -756,7 +756,7 @@ msgid "Un souci avec une commande, une livraison, un article ? Écrivez-nous."
 msgstr "A problem with an order, a delivery, an item? Write to us."
 
 msgid "Motif"
-msgstr "Reason"
+msgstr "Subject"
 
 msgid "Votre message"
 msgstr "Your message"
@@ -853,6 +853,48 @@ msgstr "Image description (AI prompt)"
 
 msgid "Génère une vraie image via votre fournisseur d'IA configuré."
 msgstr "Generates a real image via your configured AI provider."
+
+msgid "réclamation(s)"
+msgstr "complaint(s)"
+
+msgid "Nom, e-mail ou n°…"
+msgstr "Name, email or #…"
+
+msgid "Tous les motifs"
+msgstr "All subjects"
+
+msgid "Reçue le"
+msgstr "Received"
+
+msgid "Traiter"
+msgstr "Handle"
+
+msgid "Message du client"
+msgstr "Customer message"
+
+msgid "Votre réponse"
+msgstr "Your reply"
+
+msgid "Modifier / renvoyer la réponse"
+msgstr "Edit / resend reply"
+
+msgid "Répondre au client"
+msgstr "Reply to customer"
+
+msgid "Message de réponse"
+msgstr "Reply message"
+
+msgid "Ce texte sera envoyé par e-mail au client."
+msgstr "This text will be emailed to the customer."
+
+msgid "Enregistrer & envoyer"
+msgstr "Save & send"
+
+msgid "Réponse envoyée à %(e)s."
+msgstr "Reply sent to %(e)s."
+
+msgid "Réclamation mise à jour."
+msgstr "Complaint updated."
 
 msgid "Français"
 msgstr "French"

@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Réclamation" %} #{{ complaint.id }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="breadcrumb"><a href="{% url 'manage_complaints' %}">{% trans "Réclamations" %}</a> / <span>#{{ complaint.id }}</span></div>
+    <div class="dash-head">
+        <div>
+            <h1>🛎️ {% trans "Réclamation" %} #{{ complaint.id }}</h1>
+            <p class="muted">{{ complaint.get_subject_display }} · {{ complaint.created_at|date:"d F Y à H:i" }}</p>
+        </div>
+        <div><span class="status-pill complaint-{{ complaint.status }}">{{ complaint.get_status_display }}</span></div>
+    </div>
+
+    <div class="cart-layout">
+        <div>
+            <!-- Message du client -->
+            <div class="panel" style="margin-bottom:18px;">
+                <h3 class="dash-title">💬 {% trans "Message du client" %}</h3>
+                <p style="white-space:pre-line;line-height:1.7;margin:0;">{{ complaint.message }}</p>
+            </div>
+
+            <!-- Réponse déjà envoyée -->
+            {% if complaint.response %}
+            <div class="panel" style="margin-bottom:18px;border-left:3px solid var(--accent);">
+                <h3 class="dash-title">↩️ {% trans "Votre réponse" %}
+                    {% if complaint.responded_at %}<small class="muted" style="font-weight:400;text-transform:none;letter-spacing:0;"> · {{ complaint.responded_at|date:"d/m/Y H:i" }}</small>{% endif %}
+                </h3>
+                <p style="white-space:pre-line;line-height:1.7;margin:0;">{{ complaint.response }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Formulaire de réponse -->
+            <div class="panel">
+                <h3 class="dash-title">✍️ {% if complaint.response %}{% trans "Modifier / renvoyer la réponse" %}{% else %}{% trans "Répondre au client" %}{% endif %}</h3>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="form-field">
+                        <label>{% trans "Message de réponse" %}</label>
+                        {{ form.response }}{{ form.response.errors }}
+                        <span class="helptext muted">{% trans "Ce texte sera envoyé par e-mail au client." %}</span>
+                    </div>
+                    <div class="form-field" style="max-width:260px;">
+                        <label>{% trans "Statut" %}</label>{{ form.status }}{{ form.status.errors }}
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top:12px;">📨 {% trans "Enregistrer & envoyer" %}</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Fiche client -->
+        <aside class="summary" style="position:static;">
+            <h3>👤 {% trans "Client" %}</h3>
+            <p style="margin:0;line-height:1.9;">
+                <strong>{{ complaint.name }}</strong><br>
+                ✉️ <a href="mailto:{{ complaint.email }}">{{ complaint.email }}</a><br>
+                {% if complaint.phone %}📞 {{ complaint.phone }}<br>{% endif %}
+                {% if complaint.user %}<small class="muted">{% trans "Compte" %} : {{ complaint.user.username }}</small>{% endif %}
+            </p>
+            <div style="border-top:1px solid var(--border);margin-top:14px;padding-top:14px;">
+                <div class="summary-row"><span class="muted">{% trans "Motif" %}</span><span>{{ complaint.get_subject_display }}</span></div>
+                {% if complaint.order %}
+                <div class="summary-row"><span class="muted">{% trans "Commande" %}</span><span><a href="{% url 'manage_order_detail' complaint.order.id %}">#{{ complaint.order.id }}</a></span></div>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock %}

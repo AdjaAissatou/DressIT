@@ -743,6 +743,16 @@ textarea.input { border-radius: var(--radius); }
 [data-theme="light"] .status-delivered { background: #d3edd3; color: #235a23; }
 [data-theme="light"] .status-cancelled { background: #f0d3d3; color: #8a2c2c; }
 
+/* Statuts des réclamations (SAV) */
+.complaint-open { background: #4a3a1a; color: var(--gold-soft); }
+.complaint-in_progress { background: #1f3a4a; color: #9fd0e0; }
+.complaint-resolved { background: #2a4a2a; color: #b6e5b6; }
+.complaint-closed { background: #3a3a3a; color: #c8c8c8; }
+[data-theme="light"] .complaint-open { background: #f4e6c4; color: #7a5a12; }
+[data-theme="light"] .complaint-in_progress { background: #cfe6f0; color: #1c5871; }
+[data-theme="light"] .complaint-resolved { background: #d3edd3; color: #235a23; }
+[data-theme="light"] .complaint-closed { background: #e2e2e2; color: #444; }
+
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { text-align: left; padding: 12px 10px; border-bottom: 1px solid var(--border); }
 .table th { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); }

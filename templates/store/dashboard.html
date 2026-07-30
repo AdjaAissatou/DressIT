@@ -81,7 +81,7 @@
                     <tbody>
                     {% for o in recent_orders %}
                     <tr>
-                        <td><a href="{% url 'admin:store_order_change' o.id %}">#{{ o.id }}</a></td>
+                        <td><a href="{% url 'manage_order_detail' o.id %}">#{{ o.id }}</a></td>
                         <td>{{ o.full_name }}<br><small class="muted">{{ o.created_at|date:"d/m H:i" }}</small></td>
                         <td><span class="status-pill status-{{ o.status }}">{{ o.get_status_display }}</span></td>
                         <td style="text-align:right;">{{ o.total|money }}</td>
@@ -121,13 +121,13 @@
                 <h3 class="dash-title">⚠ {% trans "Stock à surveiller" %}</h3>
                 {% for p in out_of_stock %}
                 <div class="status-row">
-                    <a href="{% url 'admin:store_product_change' p.id %}">{{ p.name }}</a>
+                    <a href="{% url 'manage_product_edit' p.id %}">{{ p.name }}</a>
                     <span class="status-pill status-cancelled">{% trans "Épuisé" %}</span>
                 </div>
                 {% endfor %}
                 {% for p in low_stock %}
                 <div class="status-row">
-                    <a href="{% url 'admin:store_product_change' p.id %}">{{ p.name }}</a>
+                    <a href="{% url 'manage_product_edit' p.id %}">{{ p.name }}</a>
                     <span class="status-pill status-pending">{{ p.stock }} {% trans "restants" %}</span>
                 </div>
                 {% endfor %}
@@ -141,7 +141,7 @@
                 <h3 class="dash-title">🛎️ {% trans "Réclamations récentes" %}</h3>
                 {% for c in recent_complaints %}
                 <div class="status-row">
-                    <a href="{% url 'admin:store_complaint_change' c.id %}">#{{ c.id }} · {{ c.get_subject_display }}</a>
+                    <a href="{% url 'manage_complaint_detail' c.id %}">#{{ c.id }} · {{ c.get_subject_display }}</a>
                     <span class="status-pill status-{% if c.status == 'resolved' or c.status == 'closed' %}delivered{% elif c.status == 'in_progress' %}shipped{% else %}pending{% endif %}">{{ c.get_status_display }}</span>
                 </div>
                 {% empty %}

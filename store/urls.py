@@ -78,4 +78,7 @@ urlpatterns = [
     path("gestion/codes-promo/nouveau/", staff.promo_edit, name="manage_promo_add"),
     path("gestion/codes-promo/<int:pk>/", staff.promo_edit, name="manage_promo_edit"),
     path("gestion/codes-promo/<int:pk>/supprimer/", staff.promo_delete, name="manage_promo_delete"),
+    # Back-office : réclamations (SAV)
+    path("gestion/reclamations/", staff.complaint_list, name="manage_complaints"),
+    path("gestion/reclamations/<int:pk>/", staff.complaint_detail, name="manage_complaint_detail"),
 ]

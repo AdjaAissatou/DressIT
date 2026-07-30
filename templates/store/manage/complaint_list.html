@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Réclamations" %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% include "store/manage/_nav.html" %}
+
+    <div class="dash-head">
+        <div>
+            <h1>🛎️ {% trans "Réclamations" %}</h1>
+            <p class="muted">{{ total }} {% trans "réclamation(s)" %} · {{ open_count }} {% trans "à traiter" %}</p>
+        </div>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" class="manage-filters">
+        <input type="text" name="q" value="{{ q }}" class="input" placeholder="{% trans 'Nom, e-mail ou n°…' %}">
+        <select name="status" class="select">
+            <option value="">{% trans "Tous les statuts" %}</option>
+            {% for val, label in statuses %}<option value="{{ val }}" {% if status == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <select name="subject" class="select">
+            <option value="">{% trans "Tous les motifs" %}</option>
+            {% for val, label in subjects %}<option value="{{ val }}" {% if subject == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-ghost btn-sm">{% trans "Filtrer" %}</button>
+    </form>
+
+    <div class="panel" style="padding:0;overflow:hidden;">
+        <table class="table manage-table">
+            <thead>
+                <tr>
+                    <th>{% trans "N°" %}</th><th>{% trans "Client" %}</th><th>{% trans "Motif" %}</th>
+                    <th>{% trans "Commande" %}</th><th>{% trans "Reçue le" %}</th><th>{% trans "Statut" %}</th><th></th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for c in complaints %}
+                <tr>
+                    <td><strong>#{{ c.id }}</strong></td>
+                    <td>
+                        <strong>{{ c.name }}</strong><br>
+                        <small class="muted">{{ c.email }}</small>
+                    </td>
+                    <td>{{ c.get_subject_display }}</td>
+                    <td>{% if c.order %}<a href="{% url 'manage_order_detail' c.order.id %}">#{{ c.order.id }}</a>{% else %}<span class="muted">—</span>{% endif %}</td>
+                    <td>{{ c.created_at|date:"d/m/Y H:i" }}</td>
+                    <td><span class="status-pill complaint-{{ c.status }}">{{ c.get_status_display }}</span></td>
+                    <td style="text-align:right;white-space:nowrap;">
+                        <a href="{% url 'manage_complaint_detail' c.id %}" class="btn btn-ghost btn-sm">{% trans "Traiter" %} →</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr><td colspan="7" class="muted" style="text-align:center;padding:30px;">{% trans "Aucune réclamation." %}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if subject %}&subject={{ subject }}{% endif %}">‹</a>{% endif %}
+        <span class="current">{{ page_obj.number }}</span>
+        {% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if status %}&status={{ status }}{% endif %}{% if subject %}&subject={{ subject }}{% endif %}">›</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
