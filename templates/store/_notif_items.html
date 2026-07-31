@@ -1,0 +1,13 @@
+{% load i18n %}
+{% for n in notif_recent %}
+<a href="{% url 'notification_open' n.id %}" class="notif-item {% if not n.is_read %}unread{% endif %}">
+    <span class="notif-ic">{{ n.icon }}</span>
+    <span class="notif-txt">
+        <strong>{{ n.title }}</strong>
+        {% if n.body %}<span class="muted">{{ n.body }}</span>{% endif %}
+        <span class="notif-time muted">{{ n.created_at|timesince }}</span>
+    </span>
+</a>
+{% empty %}
+<div class="notif-empty muted">{% trans "Aucune notification pour le moment." %}</div>
+{% endfor %}

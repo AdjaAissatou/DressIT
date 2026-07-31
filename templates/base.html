@@ -72,27 +72,18 @@
             </a>
 
             {% if user.is_authenticated %}
-                <div class="notif-wrap">
+                <div class="notif-wrap" id="notif-wrap" data-feed="{% url 'notifications_feed' %}" data-unread-label="{% trans 'non lue(s)' %}">
                     <a href="{% url 'notifications' %}" class="icon-btn" title="{% trans 'Notifications' %}" aria-label="{% trans 'Notifications' %}">
                         🔔
-                        {% if notif_unread %}<span class="cart-badge notif-badge">{{ notif_unread }}</span>{% endif %}
+                        <span class="cart-badge notif-badge" id="notif-badge" {% if not notif_unread %}style="display:none;"{% endif %}>{{ notif_unread }}</span>
                     </a>
-                    {% if notif_recent %}
                     <div class="notif-dropdown">
-                        <div class="notif-head">{% trans "Notifications" %}{% if notif_unread %} · <span class="gold">{{ notif_unread }} {% trans "non lue(s)" %}</span>{% endif %}</div>
-                        {% for n in notif_recent %}
-                        <a href="{% url 'notification_open' n.id %}" class="notif-item {% if not n.is_read %}unread{% endif %}">
-                            <span class="notif-ic">{{ n.icon }}</span>
-                            <span class="notif-txt">
-                                <strong>{{ n.title }}</strong>
-                                {% if n.body %}<span class="muted">{{ n.body }}</span>{% endif %}
-                                <span class="notif-time muted">{{ n.created_at|timesince }}</span>
-                            </span>
-                        </a>
-                        {% endfor %}
+                        <div class="notif-head" id="notif-head">{% trans "Notifications" %}<span id="notif-head-count">{% if notif_unread %} · <span class="gold">{{ notif_unread }} {% trans "non lue(s)" %}</span>{% endif %}</span></div>
+                        <div class="notif-items" id="notif-items">
+                            {% include "store/_notif_items.html" %}
+                        </div>
                         <a href="{% url 'notifications' %}" class="notif-all">{% trans "Tout voir" %} →</a>
                     </div>
-                    {% endif %}
                 </div>
                 <a href="{% url 'account' %}" class="icon-btn" title="{% trans 'Mon compte' %}">👤</a>
             {% else %}

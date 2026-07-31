@@ -905,6 +905,9 @@ msgstr "unread"
 msgid "Aucune notification"
 msgstr "No notifications"
 
+msgid "Aucune notification pour le moment."
+msgstr "No notifications yet."
+
 msgid "Vous serez prévenu ici des nouvelles commandes et du suivi."
 msgstr "You'll be notified here of new orders and tracking updates."
 

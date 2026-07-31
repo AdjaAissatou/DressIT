@@ -492,6 +492,28 @@ def notifications_list(request):
 
 
 @login_required
+def notifications_feed(request):
+    """Flux JSON pour le rafraîchissement en temps réel de la cloche."""
+    from django.template.loader import render_to_string
+
+    qs = request.user.notifications.all()
+    recent = list(qs[:8])
+    unread = qs.filter(is_read=False).count()
+    latest_id = recent[0].id if recent else 0
+    html = render_to_string(
+        "store/_notif_items.html", {"notif_recent": recent}, request=request
+    )
+    # Titre de la plus récente non lue (pour le toast « nouvelle notification »).
+    newest = next((n for n in recent if not n.is_read), None)
+    return JsonResponse({
+        "unread": unread,
+        "latest_id": latest_id,
+        "items_html": html,
+        "newest_title": f"{newest.icon} {newest.title}" if newest else "",
+    })
+
+
+@login_required
 def notification_open(request, pk):
     """Ouvre une notification : la marque lue et redirige vers sa cible."""
     from .models import Notification

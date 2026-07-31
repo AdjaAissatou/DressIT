@@ -139,13 +139,82 @@
         });
 
         /* ---- Auto-masquage des toasts ---- */
-        document.querySelectorAll(".toast").forEach(function (toast) {
+        function autoDismiss(toast) {
             setTimeout(function () {
                 toast.style.transition = "opacity .4s ease, transform .4s ease";
                 toast.style.opacity = "0";
                 toast.style.transform = "translateX(40px)";
                 setTimeout(function () { toast.remove(); }, 400);
             }, 4000);
-        });
+        }
+        document.querySelectorAll(".toast").forEach(autoDismiss);
+
+        function showToast(text, tag) {
+            var box = document.querySelector(".messages");
+            if (!box) {
+                box = document.createElement("div");
+                box.className = "messages";
+                document.body.appendChild(box);
+            }
+            var t = document.createElement("div");
+            t.className = "toast " + (tag || "info");
+            t.textContent = text;
+            box.appendChild(t);
+            autoDismiss(t);
+        }
+
+        /* ---- Notifications en temps réel (interrogation légère) ---- */
+        var notifWrap = document.getElementById("notif-wrap");
+        if (notifWrap) {
+            var feedUrl = notifWrap.dataset.feed;
+            var badge = document.getElementById("notif-badge");
+            var headCount = document.getElementById("notif-head-count");
+            var itemsBox = document.getElementById("notif-items");
+            // Point de référence initial : la plus récente déjà affichée.
+            var lastId = null;
+            var first = itemsBox && itemsBox.querySelector(".notif-item");
+            var initMatch = first && first.getAttribute("href").match(/(\d+)\/?$/);
+            lastId = initMatch ? parseInt(initMatch[1], 10) : 0;
+
+            function poll() {
+                if (document.hidden) { return; }
+                fetch(feedUrl, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+                    .then(function (r) { return r.ok ? r.json() : null; })
+                    .then(function (d) {
+                        if (!d) { return; }
+                        // Badge
+                        if (badge) {
+                            if (d.unread > 0) {
+                                badge.textContent = d.unread;
+                                badge.style.display = "";
+                            } else {
+                                badge.style.display = "none";
+                            }
+                        }
+                        if (headCount) {
+                            headCount.innerHTML = d.unread > 0
+                                ? ' · <span class="gold">' + d.unread + " " + (notifWrap.dataset.unreadLabel || "non lue(s)") + "</span>"
+                                : "";
+                        }
+                        if (itemsBox && d.items_html) { itemsBox.innerHTML = d.items_html; }
+                        // Nouvelle notification arrivée ? → toast + petit son visuel
+                        if (lastId !== null && d.latest_id > lastId && d.newest_title) {
+                            showToast(d.newest_title, "info");
+                            if (badge) {
+                                badge.classList.remove("pulse");
+                                void badge.offsetWidth;   // relance l'animation
+                                badge.classList.add("pulse");
+                            }
+                        }
+                        lastId = d.latest_id;
+                    })
+                    .catch(function () { /* silencieux : réseau indisponible */ });
+            }
+
+            setInterval(poll, 20000);
+            document.addEventListener("visibilitychange", function () {
+                if (!document.hidden) { poll(); }
+            });
+        }
     });
 })();

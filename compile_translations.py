@@ -355,6 +355,7 @@ TRANSLATIONS = {
     "Notifications": "Notifications",
     "non lue(s)": "unread",
     "Aucune notification": "No notifications",
+    "Aucune notification pour le moment.": "No notifications yet.",
     "Vous serez prévenu ici des nouvelles commandes et du suivi.":
         "You'll be notified here of new orders and tracking updates.",
     # Langues (menu déroulant Django)

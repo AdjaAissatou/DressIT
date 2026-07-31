@@ -52,6 +52,7 @@ urlpatterns = [
     path("compte/commande/<int:order_id>/", views.order_detail, name="order_detail"),
     # Notifications (cloche)
     path("notifications/", views.notifications_list, name="notifications"),
+    path("notifications/flux/", views.notifications_feed, name="notifications_feed"),
     path("notifications/<int:pk>/", views.notification_open, name="notification_open"),
     path("inscription/", views.signup, name="signup"),
     # Réclamations (SAV)
