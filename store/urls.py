@@ -50,6 +50,9 @@ urlpatterns = [
     # Espace client
     path("compte/", views.account, name="account"),
     path("compte/commande/<int:order_id>/", views.order_detail, name="order_detail"),
+    # Notifications (cloche)
+    path("notifications/", views.notifications_list, name="notifications"),
+    path("notifications/<int:pk>/", views.notification_open, name="notification_open"),
     path("inscription/", views.signup, name="signup"),
     # Réclamations (SAV)
     path("reclamation/", views.complaint_create, name="complaint"),

@@ -351,6 +351,12 @@ TRANSLATIONS = {
     "Enregistrer & envoyer": "Save & send",
     "Réponse envoyée à %(e)s.": "Reply sent to %(e)s.",
     "Réclamation mise à jour.": "Complaint updated.",
+    # Notifications
+    "Notifications": "Notifications",
+    "non lue(s)": "unread",
+    "Aucune notification": "No notifications",
+    "Vous serez prévenu ici des nouvelles commandes et du suivi.":
+        "You'll be notified here of new orders and tracking updates.",
     # Langues (menu déroulant Django)
     "Français": "French",
     "English": "English",

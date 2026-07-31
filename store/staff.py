@@ -554,6 +554,9 @@ def complaint_detail(request, pk):
             # Envoie la réponse au client par e-mail s'il y a un texte de réponse.
             if complaint.response.strip():
                 send_complaint_response(complaint, request)
+                from .notifications import notify_complaint_reply
+
+                notify_complaint_reply(complaint)
                 flash.success(
                     request,
                     _("Réponse envoyée à %(e)s.") % {"e": complaint.email},

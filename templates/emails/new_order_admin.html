@@ -1,0 +1,17 @@
+{% extends "emails/_base.html" %}
+{% load i18n store_extras %}
+{% block body %}
+<h1 style="font-family:Georgia,serif;font-size:22px;margin:0 0 6px;">🧾 {% trans "Nouvelle commande" %} #{{ order.id }}</h1>
+<p style="color:#8f7a63;margin:0 0 16px;">{% blocktrans with name=order.full_name %}Reçue de <strong>{{ name }}</strong>.{% endblocktrans %}
+{% if order.payment_method == 'cod' %} {% trans "Paiement à la livraison." %}{% elif order.paid %} {% trans "Déjà payée." %}{% else %} {% trans "En attente de paiement." %}{% endif %}</p>
+
+<div style="padding:16px;background:#f6efe1;border-radius:10px;font-size:14px;margin-bottom:16px;">
+    <strong>{% trans "Client" %} :</strong> {{ order.full_name }} · {{ order.email }} · {{ order.phone }}<br>
+    <strong>{% trans "Livraison" %} :</strong> {{ order.address }}, {{ order.postal_code }} {{ order.city }}, {{ order.country }}<br>
+    <strong>{% trans "Paiement" %} :</strong> {{ order.get_payment_method_display }} · <strong>{% trans "Statut" %} :</strong> {{ order.get_status_display }}
+</div>
+
+{% include "emails/_order_table.html" %}
+
+<p style="margin-top:18px;font-size:13px;color:#8f7a63;">{% trans "Gérez cette commande depuis votre espace DressIT (Gestion → Commandes)." %}</p>
+{% endblock %}

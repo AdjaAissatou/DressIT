@@ -272,6 +272,9 @@ class Order(models.Model):
     )
     promo_code = models.CharField(_("Code promo utilisé"), max_length=40, blank=True)
 
+    # Notification de l'administrateur envoyée (évite les doublons).
+    admin_notified = models.BooleanField(_("Admin notifié"), default=False)
+
     # Suivi du paiement en ligne (Wave / Orange Money).
     gateway_session_id = models.CharField(_("Réf. session paiement"), max_length=120, blank=True)
     gateway_token = models.CharField(_("Jeton de paiement"), max_length=255, blank=True)
@@ -466,6 +469,52 @@ class Complaint(models.Model):
 
     def __str__(self):
         return f"Réclamation #{self.pk} — {self.get_subject_display()}"
+
+
+class Notification(models.Model):
+    """Notification in-app (cloche) pour l'administrateur ou le client."""
+
+    class Kind(models.TextChoices):
+        ORDER = "order", _("Nouvelle commande")
+        PAYMENT = "payment", _("Paiement")
+        STATUS = "status", _("Suivi de commande")
+        COMPLAINT = "complaint", _("Réclamation")
+        REPLY = "reply", _("Réponse SAV")
+        STOCK = "stock", _("Stock")
+        INFO = "info", _("Information")
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="notifications",
+        verbose_name=_("Destinataire"),
+    )
+    kind = models.CharField(
+        _("Type"), max_length=20, choices=Kind.choices, default=Kind.INFO
+    )
+    title = models.CharField(_("Titre"), max_length=200)
+    body = models.CharField(_("Détail"), max_length=300, blank=True)
+    url = models.CharField(_("Lien"), max_length=300, blank=True)
+    is_read = models.BooleanField(_("Lue"), default=False)
+    created_at = models.DateTimeField(_("Reçue le"), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _("Notification")
+        verbose_name_plural = _("Notifications")
+        ordering = ["-created_at"]
+        indexes = [models.Index(fields=["user", "is_read"])]
+
+    def __str__(self):
+        return f"{self.get_kind_display()} — {self.title}"
+
+    ICONS = {
+        "order": "🧾", "payment": "💰", "status": "🚚",
+        "complaint": "🛎️", "reply": "↩️", "stock": "📦", "info": "🔔",
+    }
+
+    @property
+    def icon(self):
+        return self.ICONS.get(self.kind, "🔔")
 
 
 class Favorite(models.Model):

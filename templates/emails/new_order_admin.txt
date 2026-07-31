@@ -1,0 +1,9 @@
+{% load i18n store_extras %}{% trans "Nouvelle commande" %} #{{ order.id }}
+{% trans "Client" %} : {{ order.full_name }} - {{ order.email }} - {{ order.phone }}
+{% trans "Livraison" %} : {{ order.address }}, {{ order.postal_code }} {{ order.city }}, {{ order.country }}
+{% trans "Paiement" %} : {{ order.get_payment_method_display }} - {% trans "Statut" %} : {{ order.get_status_display }}
+{% trans "Total" %} : {{ order.total|money }}
+
+{% for item in order.items.all %}- {{ item.quantity }} x {{ item.product_name }}{% if item.size %} ({{ item.size }}{% if item.color %}, {{ item.color }}{% endif %}){% endif %} : {{ item.subtotal|money }}
+{% endfor %}
+{% trans "Gérez cette commande depuis votre espace DressIT." %}

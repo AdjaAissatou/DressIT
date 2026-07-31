@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 from .emails import send_order_status_update
 from .models import Order
+from .notifications import notify_status
 
 # Statuts qui déclenchent un e-mail au client.
 NOTIFY_STATUSES = {Order.Status.SHIPPED, Order.Status.DELIVERED, Order.Status.CANCELLED}
@@ -24,5 +25,9 @@ def _notify_status_change(sender, instance, created, **kwargs):
     if created:
         return
     old = getattr(instance, "_old_status", None)
-    if old and old != instance.status and instance.status in NOTIFY_STATUSES:
-        send_order_status_update(instance)
+    if old and old != instance.status:
+        # Notification in-app au client pour tout changement de statut.
+        notify_status(instance)
+        # E-mail seulement pour les étapes marquantes (expédition, livraison…).
+        if instance.status in NOTIFY_STATUSES:
+            send_order_status_update(instance)

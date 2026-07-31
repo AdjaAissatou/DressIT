@@ -294,6 +294,42 @@ img {
     padding: 0 5px;
 }
 
+/* Cloche de notifications */
+.notif-wrap { position: relative; display: inline-flex; }
+.notif-badge { background: #c05b5b; color: #fff; }
+.notif-dropdown {
+    position: absolute; top: 52px; right: 0; width: 340px; max-width: 86vw;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    box-shadow: var(--shadow); overflow: hidden; z-index: 120;
+    opacity: 0; visibility: hidden; transform: translateY(-8px);
+    transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
+}
+.notif-wrap:hover .notif-dropdown,
+.notif-wrap:focus-within .notif-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.notif-head { padding: 12px 16px; border-bottom: 1px solid var(--border); font-weight: 700; font-size: 0.9rem; }
+.notif-item { display: flex; gap: 10px; padding: 11px 16px; border-bottom: 1px solid var(--border); align-items: flex-start; }
+.notif-item:hover { background: var(--surface-2); }
+.notif-item.unread { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+.notif-ic { font-size: 1.15rem; line-height: 1.2; flex: none; }
+.notif-txt { display: flex; flex-direction: column; gap: 2px; font-size: 0.85rem; }
+.notif-txt strong { font-weight: 600; }
+.notif-time { font-size: 0.75rem; }
+.notif-all { display: block; text-align: center; padding: 11px; font-weight: 600; color: var(--accent); }
+.notif-all:hover { background: var(--surface-2); }
+
+/* Page notifications */
+.notif-page { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; }
+.notif-row {
+    display: flex; gap: 14px; align-items: center; padding: 14px 18px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+    transition: border-color var(--transition), transform var(--transition);
+}
+.notif-row:hover { border-color: var(--accent); transform: translateY(-2px); }
+.notif-row.unread { border-left: 3px solid var(--accent); }
+.notif-row .notif-ic { font-size: 1.5rem; }
+.notif-body { display: flex; flex-direction: column; gap: 3px; flex: 1; }
+.notif-row .notif-time { white-space: nowrap; }
+
 /* Sélecteur de langue */
 .lang-form { display: inline-flex; }
 .lang-select {

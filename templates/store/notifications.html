@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Notifications" %}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width:760px;">
+    <div class="page-head"><h1>🔔 {% trans "Notifications" %}</h1></div>
+
+    <div class="notif-page">
+        {% for n in notifications %}
+        <a href="{% url 'notification_open' n.id %}" class="notif-row {% if not n.is_read %}unread{% endif %}">
+            <span class="notif-ic">{{ n.icon }}</span>
+            <span class="notif-body">
+                <strong>{{ n.title }}</strong>
+                {% if n.body %}<span class="muted">{{ n.body }}</span>{% endif %}
+            </span>
+            <span class="notif-time muted">{{ n.created_at|timesince }}</span>
+        </a>
+        {% empty %}
+        <div class="empty-state">
+            <div class="icon">🔔</div>
+            <h3>{% trans "Aucune notification" %}</h3>
+            <p>{% trans "Vous serez prévenu ici des nouvelles commandes et du suivi." %}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

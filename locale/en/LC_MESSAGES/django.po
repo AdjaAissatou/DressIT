@@ -896,6 +896,18 @@ msgstr "Reply sent to %(e)s."
 msgid "Réclamation mise à jour."
 msgstr "Complaint updated."
 
+msgid "Notifications"
+msgstr "Notifications"
+
+msgid "non lue(s)"
+msgstr "unread"
+
+msgid "Aucune notification"
+msgstr "No notifications"
+
+msgid "Vous serez prévenu ici des nouvelles commandes et du suivi."
+msgstr "You'll be notified here of new orders and tracking updates."
+
 msgid "Français"
 msgstr "French"
 

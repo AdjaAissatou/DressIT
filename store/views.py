@@ -13,7 +13,7 @@ from django.utils.translation import gettext as _
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from . import imagesearch, payments
+from . import imagesearch, notifications, payments
 from .cart import Cart
 from .emails import send_complaint_received, send_order_confirmation, send_payment_confirmation
 from .forms import CheckoutForm, ComplaintForm, SignUpForm
@@ -239,6 +239,7 @@ def checkout(request):
                 cart.clear()
                 cart.remove_promo()
                 send_order_confirmation(order, request)
+                notifications.notify_new_order(order, request)
                 messages.success(
                     request,
                     _("Merci ! Votre commande #%(id)s a bien été enregistrée.")
@@ -298,6 +299,11 @@ def _mark_paid(order, request=None):
     order.save(update_fields=["paid", "status"])
     _commit_stock(order)
     send_payment_confirmation(order, request)
+    # Commande en ligne : c'est le paiement qui la rend « ferme » → on prévient
+    # l'administrateur maintenant (les commandes à la livraison le sont dès la
+    # validation du panier).
+    notifications.notify_new_order(order, request)
+    notifications.notify_payment(order)
 
 
 # --------------------------------------------------------------------------- #
@@ -474,6 +480,29 @@ def order_detail(request, order_id):
     return render(request, "store/order_detail.html", {"order": order})
 
 
+@login_required
+def notifications_list(request):
+    """Centre de notifications de l'utilisateur (admin ou client)."""
+    from .models import Notification
+
+    items = list(request.user.notifications.all()[:60])
+    # Toutes les notifications affichées passent en « lues ».
+    request.user.notifications.filter(is_read=False).update(is_read=True)
+    return render(request, "store/notifications.html", {"notifications": items})
+
+
+@login_required
+def notification_open(request, pk):
+    """Ouvre une notification : la marque lue et redirige vers sa cible."""
+    from .models import Notification
+
+    notif = get_object_or_404(Notification, pk=pk, user=request.user)
+    if not notif.is_read:
+        notif.is_read = True
+        notif.save(update_fields=["is_read"])
+    return redirect(notif.url or "notifications")
+
+
 # --------------------------------------------------------------------------- #
 # Réclamations (SAV)
 # --------------------------------------------------------------------------- #
@@ -496,6 +525,7 @@ def complaint_create(request):
                 complaint.user = request.user
             complaint.save()
             send_complaint_received(complaint, request)
+            notifications.notify_new_complaint(complaint)
             messages.success(
                 request,
                 _("Votre réclamation #%(id)s a bien été envoyée. Nous vous répondrons vite.")

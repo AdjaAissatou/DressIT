@@ -58,6 +58,12 @@ def send_order_status_update(order, request=None):
     return _send(subject, "order_status", {"order": order}, order.email, request)
 
 
+def send_new_order_admin(order, request=None):
+    """Notifie l'administrateur (vous) de chaque nouvelle commande."""
+    subject = f"[DressIT] 🧾 Nouvelle commande #{order.id} — {order.full_name}"
+    return _send(subject, "new_order_admin", {"order": order}, _admin_email(), request)
+
+
 # --------------------------------------------------------------------------- #
 # Réclamations (SAV)
 # --------------------------------------------------------------------------- #
